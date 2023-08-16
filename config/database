@@ -1,0 +1,29 @@
+const { Sequelize } = require("sequelize");
+
+// module.exports = new Sequelize('gomedicz', 'postgres', 'password', {
+//   host: 'localhost',
+//   dialect: 'postgres'
+// });
+
+const sequelize = new Sequelize("gomedicz", "postgres", "password", {
+  host: "localhost",
+  dialect: "postgres",
+ 
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000,
+  },
+});
+
+const testDbConnection = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Connection has been established successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+};
+
+module.exports = { sq: sequelize, testDbConnection };
