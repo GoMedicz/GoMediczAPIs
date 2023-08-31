@@ -22,6 +22,7 @@ class Utils{
             PASSWORD_MATCH_ERROR: "Your password doesn't match our records",
             CONFIRM_PASSWORD_ERROR: "passwords dont match",
             DATA_VALIDATION_ERROR: "Invalid characters in data sent",
+            INCOMPLETE_DATA_ERROR:"please provide requested credentials",
             BAD_DATA_ERROR: "You've got some errors in your sent data",
             BAD_DATA_ERROR: "You've got some errors in your sent data",
             INTEREST_DATA_ERROR:
@@ -30,6 +31,7 @@ class Utils{
             LOGIN_FAILURE: "Sign In unsuccessful",
             ACCOUNT_UPDATE_SUCCESS: "Account has been successfully updated",
             LOGOUT_SUCCESS: "Sign Out successful",
+            ITEM_CREATE_ERROR:'unable to create new items',
             LOGOUT_ERROR:"We had issues logging you out, try again",
             REGISTER_SUCCESS: "Your account has been successfully created",
             REGISTER_FAILURE: "unable to register user",

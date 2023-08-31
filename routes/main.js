@@ -1,10 +1,6 @@
-const express = require('express');
-const mainrouter = express.Router();
-const { homeController } = require('../controllers/main');
-
-mainrouter.get('/', homeController);
-
-
-
-
-module.exports = { mainrouter };
+ //ACCESS_TOKEN_SECRET = '24b2d569c6df1106e94e384d833c1185d210a1cc66bb49ebc9eed05f97c00974235136c618525a430c5637fbac0027ed228d59b2054cc0edc2bb96f27338f2b0'
+// ACCESS_REFRESH_TOKEN = '3e9bee190add0177d987be0d03354a81a8c696593b41293e8a9f30397314c00b771dd0c83a167f5b42f36d0f16b39bfc1d84cb3d4b8c5ecfbc5c217f47ebd02a'
+// PORT = 5190
+// ALGO=HS256
+// TWILIO_ACCOUNT_SID = 'AC856d393287b6fca019bd7bb879c88d9a'
+// TWILIO_AUTH_TOKEN = '40b4773e538a84ce5b99ec62fb4644a3'

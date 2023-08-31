@@ -1,10 +1,9 @@
-// const db = require("../config/database")
 const { sq } = require('../config/database')
 const Sequelize = require('sequelize')
 const {DataTypes} = require('sequelize')
 
 
-const User = sq.define('users',{
+const Doctors = sq.define('Doctors',{
     Name:{
         type:DataTypes.STRING,
         allowNull: false,
@@ -22,22 +21,24 @@ const User = sq.define('users',{
     Password:{
         type:DataTypes.STRING
     },
-    HomeAddress: {
+    Specialty: {
         type: DataTypes.STRING,
     },
-    WorkAddress: {
-        type: DataTypes.STRING,
+    Hospital: {
+        type: DataTypes.STRING
     },
-    OtherAddress: {
-        type: DataTypes.STRING,
+    About: {
+        type: DataTypes.TEXT,
     },
-
+    AvailableTimes: {
+        type: DataTypes.JSON, // Store available times as JSON data
+    },
 })
 
-User.sync().then(()=>{
-    console.log('User model synced')
+Doctors.sync().then(()=>{
+    console.log('Doctors model synced')
 })
 
 
 
-module.exports = User
+module.exports = Doctors
