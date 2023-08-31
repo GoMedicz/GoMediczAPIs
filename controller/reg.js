@@ -1,14 +1,30 @@
 const User = require("../models/users");
-
-const otpGenerator = require("otp-generator");
 const bcrypt = require("bcrypt");
 const { Auth } = require("../middlewares/auth");
 const { Utils } = require("../middlewares/utils");
-const OTPx = require("../models/otp");
 const _ = require("lodash");
 
 const utils = new Utils();
 const auth = new Auth();
+const twilio = require("twilio");
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const twilioClient = twilio(accountSid, authToken);
+
+const sendOtp = async (phoneNumber, otp) => {
+  try {
+    const message = await twilioClient.messages.create({
+      body: `Your OTP: ${otp}`,
+      from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
+      to: phoneNumber,
+    });
+
+    console.log(message.sid);
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    throw error;
+  }
+};
 
 const Reg = async (req, res) => {
   try {
@@ -16,52 +32,24 @@ const Reg = async (req, res) => {
     if (!Email || !PhoneNumber) {
       return res.status(401).json({
         message: "fields cannot be empty",
-        error: utils.getMessage(" DATA_ERROR"),
+        error: utils.getMessage("DATA_ERROR"),
       });
     }
-    const existingUser = await User.findOne({
-      where: { Email: req.body.Email },
-    });
+    const existingUser = await User.findOne({ $or: [{ Email }, { PhoneNumber }] });
     if (existingUser) {
-      return res.status(400).json({
-        message: "This account already exists",
+      return res.status(409).json({
+        message: "User with this email or phone number already exists",
         error: utils.getMessage("ACCOUNT_EXISTS_ERROR"),
       });
     }
-    const otp = otpGenerator.generate(6, {
-      digit: true,
-      alphabets: false,
-      upperCase: false,
-      specialChars: false,
-    });
+    // Get OTP and PhoneNumber from the frontend
+    const { otp } = req.body;
+    // Send OTP to the user's phone number
+    await sendOtp(PhoneNumber, otp);
+    console.log("something wrong here");
 
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-    const client = require("twilio")(accountSid, authToken);
-    client.messages
-      .create({
-        body: `+${otp}`,
-        from: "+15736725667",
-        to: `+${PhoneNumber}`,
-      })
-      .then((message) => console.log(message.sid));
-
-    // console.log(otp);
-    const salt = await bcrypt.genSalt(10);
-    const hashedOtp = await bcrypt.hash(otp, salt);
-
-    const otpData = await OTPx.create({
-      PhoneNumber: req.body.PhoneNumber,
-      otp: hashedOtp,
-    });
-    if (!otpData) {
-      return res
-        .status(400)
-        .json({ status: false, message: utils.getMessage("OTP_ERROR") });
-    }
-    return res
-      .status(200)
-      .json({ message: utils.getMessage("QUERY_SUCCESS"), data: otpData });
+    // Return success response
+    return res.status(200).json({ message: "OTP sent successfully" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -74,62 +62,29 @@ const Reg = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    // const { Name, Email, PhoneNumber } = req.body;
+    const { Email, PhoneNumber, otp, Password, confirmPassword } = req.body;
 
-    const otpHolder = await OTPx.findOne({
-      where: { PhoneNumber: req.body.PhoneNumber },
+    // Verify OTP on the frontend
+    // ...
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(Password, 10);
+
+    // Create the user in the database
+    const newUser = await User.create({
+      PhoneNumber: PhoneNumber,
+      Email: Email,
+      Name: req.body.Name,
+      Password: hashedPassword,
     });
-    if (!otpHolder) {
-      return res.status(200).json({ message: "You use an expired otp" });
-    }
 
-    const smsOtp = req.body.otp.replace("+", "").trim();
-    const validUser = await bcrypt.compare(smsOtp, otpHolder.otp);
+    // Generate token
+    const token = auth.generateAuthToken(newUser);
 
-    //check if otp number tallies with the on at db
-
-    if (otpHolder.PhoneNumber === req.body.PhoneNumber && validUser) {
-      const { Password, confirmPassword } = req.body;
-      if (Password != confirmPassword) {
-        return res.status(400).json({
-          message: "passwords do not match ",
-          error: utils.getMessage(" CONFIRM_PASSWORD_ERROR"),
-        });
-      }
-
-      const hashedPassword = await bcrypt.hash(Password, 10);
-
-      const newUser = new User(_.pick(req.body, ["PhoneNumber"]));
-      newUser.auth = auth;
-      //save new user to db after confirmation of otp
-
-      const createUser = await User.create({
-        PhoneNumber: req.body.PhoneNumber,
-        Email: req.body.Email,
-        Name: req.body.Name,
-        Password: hashedPassword,
-      });
-      const token = newUser.auth.generateAuthToken(createUser);
-      //delete otp row
-      const OtpDelete = await OTPx.destroy({
-        where: {
-          PhoneNumber: otpHolder.PhoneNumber,
-        },
-      });
-      if (!OtpDelete) {
-        res.status(400).json({ message: "problem deleting otp from db" });
-      }
-
-      return res.status(200).json({
-        message: "succesful",
-        data: createUser,
-        token: token,
-      });
-    }
-
-    return res.status(400).json({
-      message: "registration failed",
-      error: utils.getMessage("UNKNOWN_ERROR"),
+    return res.status(200).json({
+      message: "Registration successful",
+      data: newUser,
+      token: token,
     });
   } catch (error) {
     return res.status(500).json({
@@ -169,7 +124,7 @@ const login = async (req, res) => {
       });
     }
     //if password matches, generate a new token and send in the response
-    const token = auth.generateAuthToken(user);
+    const token = auth.generateAuthToken({ email: user.Email });
     return res.status(200).json({
       status: true,
       message: "login succesfull",

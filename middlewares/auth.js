@@ -10,9 +10,9 @@ class Auth {
     constructor() {
         this.blacklist = new Set(); // Set to store invalidated tokens
       }
-    generateAuthToken(User){
+    generateAuthToken(user){
         const tokenData = {
-            email:User.email
+            email:user.email
         }
         return jwt.sign(tokenData,process.env.ACCESS_TOKEN_SECRET)
 
@@ -28,15 +28,19 @@ class Auth {
         }
         const token = authHeader.split(' ')[1]
         try {
-            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err,user)=>{
+            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err,decodedToken)=>{
 
-                if (typeof user === 'object' && user !== null) {
-                    req.user = user;
+                if (typeof decodedToken === 'object' && decodedToken !== null) {
+                  console.log('Decoded Token:', decodedToken);
+                    req.user = decodedToken;
                   } else {
                     return res.sendStatus(403);
                   }
                 next()
             })
+            console.log('authHeader:', authHeader);
+console.log('token:', token);
+
         } catch (err) {
             return res.status(500).json({
                 status:false,
