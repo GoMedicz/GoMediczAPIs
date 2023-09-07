@@ -20,7 +20,13 @@ app.use(express.urlencoded({ extended: true }));
       );
       next();
   });
+
+
   app.use(authRouter)
+  // Add this at the end of your route configuration
+
+
+
 
 const PORT = process.env.PORT
 

@@ -1,11 +1,15 @@
 const express = require('express')
+const app = express()
 const authRouter = express.Router()
 const {Auth} = require('../middlewares/auth')
 const userAuth = require('../controller/reg')
+const bank = require('../controller/bank_verification')
 const docAuth = require('../controller/doctors')
 const {userValidation, loginValidate} = require('../middlewares/userValidator')
 
 const auth = new Auth()
+
+
 
 authRouter.post("/reg", userAuth.Reg)
 authRouter.post("/login", loginValidate, userAuth.login)
@@ -19,6 +23,8 @@ authRouter.get("/getDoctorProfile/:doctorEmail", docAuth.DoctorProfile)
 authRouter.put("/updateDoctorProfile",auth.tokenRequired, docAuth.updateDoctorProfile)
 authRouter.post("/submitRating",auth.tokenRequired, docAuth.submitRating )
 authRouter.get("/searchDoctors", docAuth.searchDoctors);
+authRouter.get("/allbanks", bank.getBanks);
+authRouter.post("/verifybank", bank.verifyBank)
 
 
 module.exports = {
