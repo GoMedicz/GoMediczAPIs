@@ -23,8 +23,8 @@ authRouter.get("/getDoctorProfile/:doctorEmail", docAuth.DoctorProfile)
 authRouter.put("/updateDoctorProfile",auth.tokenRequired, docAuth.updateDoctorProfile)
 authRouter.post("/submitRating",auth.tokenRequired, docAuth.submitRating )
 authRouter.get("/searchDoctors", docAuth.searchDoctors);
-authRouter.get("/allbanks", bank.getBanks);
-authRouter.post("/verifybank", bank.verifyBank)
+authRouter.get("/allbanks", auth.tokenRequired,bank.getBanks);
+authRouter.post("/verifybank",auth.tokenRequired, bank.verifyBank)
 
 
 module.exports = {
