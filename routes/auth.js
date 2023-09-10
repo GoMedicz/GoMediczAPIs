@@ -5,6 +5,7 @@ const {Auth} = require('../middlewares/auth')
 const userAuth = require('../controller/reg')
 const bank = require('../controller/bank_verification')
 const docAuth = require('../controller/doctors')
+const hospital = require('../controller/hospital')
 const {userValidation, loginValidate} = require('../middlewares/userValidator')
 
 const auth = new Auth()
@@ -25,6 +26,9 @@ authRouter.post("/submitRating",auth.tokenRequired, docAuth.submitRating )
 authRouter.get("/searchDoctors", docAuth.searchDoctors);
 authRouter.get("/allbanks", auth.tokenRequired,bank.getBanks);
 authRouter.post("/verifybank",auth.tokenRequired, bank.verifyBank)
+authRouter.post("/createHospital",hospital.createHospitalProfile)
+authRouter.put("/updateHospital/:hospitalId", hospital.updateHospitalProfile)
+authRouter.get("/searchHospital", hospital.searchHospitals)
 
 
 module.exports = {
