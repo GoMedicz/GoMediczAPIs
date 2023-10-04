@@ -3,7 +3,7 @@ const Sequelize = require('sequelize')
 const {DataTypes} = require('sequelize')
 
 
-const Hospitals = sq.define('tbl_hospitals',{
+const Labs = sq.define('tbl_labs',{
     name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -23,10 +23,10 @@ const Hospitals = sq.define('tbl_hospitals',{
     },
 })
 
-Hospitals.sync().then(()=>{
-    console.log('hospital model synced')
+Labs.sync().then(()=>{
+    console.log('lab model synced')
 })
 
 
 
-module.exports = Hospitals
+module.exports = Labs

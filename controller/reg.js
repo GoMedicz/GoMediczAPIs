@@ -1,4 +1,4 @@
-const User = require("../models/users");
+const {User} = require('../models/users');
 const bcrypt = require("bcrypt");
 const { Auth } = require("../middlewares/auth");
 const { Utils } = require("../middlewares/utils");
@@ -28,14 +28,14 @@ const sendOtp = async (phoneNumber, otp) => {
 
 const Reg = async (req, res) => {
   try {
-    const { Email, PhoneNumber } = req.body;
-    if (!Email || !PhoneNumber) {
+    const { email, phoneNumber } = req.body;
+    if (!email || !phoneNumber) {
       return res.status(401).json({
         message: "fields cannot be empty",
         error: utils.getMessage("DATA_ERROR"),
       });
     }
-    const existingUser = await User.findOne({ $or: [{ Email }, { PhoneNumber }] });
+    const existingUser = await User.findOne({ where: { phoneNumber: phoneNumber } });
     if (existingUser) {
       return res.status(409).json({
         message: "User with this email or phone number already exists",
@@ -45,7 +45,7 @@ const Reg = async (req, res) => {
     // Get OTP and PhoneNumber from the frontend
     const { otp } = req.body;
     // Send OTP to the user's phone number
-    await sendOtp(PhoneNumber, otp);
+    await sendOtp(phoneNumber, otp);
     console.log("something wrong here");
 
     // Return success response
@@ -62,20 +62,20 @@ const Reg = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    const { Email, PhoneNumber, otp, Password, confirmPassword } = req.body;
+    const { email, phoneNumber, otp, password, confirmPassword } = req.body;
 
     // Verify OTP on the frontend
     // ...
 
     // Hash the password
-    const hashedPassword = await bcrypt.hash(Password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create the user in the database
     const newUser = await User.create({
-      PhoneNumber: PhoneNumber,
-      Email: Email,
-      Name: req.body.Name,
-      Password: hashedPassword,
+      phoneNumber: phoneNumber,
+      email: email,
+      name: req.body.name,
+      password: hashedPassword,
     });
 
     // Generate token
@@ -97,8 +97,8 @@ const verifyOtp = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { Email, Password } = req.body;
-    if (!Email || !Password) {
+    const { email, password } = req.body;
+    if (!email || !password) {
       return res.status(400).json({
         status: false,
         message: "invalid credentials",
@@ -106,7 +106,7 @@ const login = async (req, res) => {
       });
     }
     //find user
-    const user = await User.findOne({ where: { Email: Email } });
+    const user = await User.findOne({ where: { email: email } });
     if (!user) {
       return res.status(400).json({
         status: false,
@@ -115,7 +115,7 @@ const login = async (req, res) => {
       });
     }
     //compare passwords
-    const isMatchedPassword = await bcrypt.compare(Password, user.Password);
+    const isMatchedPassword = await bcrypt.compare(password, user.password);
     if (!isMatchedPassword) {
       return res.status(400).json({
         status: false,
@@ -124,7 +124,7 @@ const login = async (req, res) => {
       });
     }
     //if password matches, generate a new token and send in the response
-    const token = auth.generateAuthToken({ email: user.Email });
+    const token = auth.generateAuthToken({ email: user.email });
     return res.status(200).json({
       status: true,
       message: "login succesfull",

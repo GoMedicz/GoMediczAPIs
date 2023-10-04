@@ -2,9 +2,10 @@ require("dotenv").config()
 const express = require('express');
 const app = express()
 // const db = require("./config/database")
-const {authRouter} = require('../routes/auth')
+const {authRouter} = require('../routes/route')
+const bodyParser = require('body-parser');
 // const regR = require('./routes/auth')
-
+app.use(bodyParser.json());
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
     app.use(express.json());

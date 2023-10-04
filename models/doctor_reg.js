@@ -3,42 +3,107 @@ const Sequelize = require('sequelize')
 const {DataTypes} = require('sequelize')
 
 
-const Doctors = sq.define('Doctors',{
-    Name:{
-        type:DataTypes.STRING,
+const Doctors = sq.define('tbl_doctors',{
+    fullName: {
+        type: DataTypes.STRING,
         allowNull: false,
-
     },
-    Email:{
-        type:DataTypes.STRING,
+    email: {
+        type: DataTypes.STRING,
         allowNull: false,
-        primaryKey:true,
+        primaryKey: true,
     },
-    PhoneNumber:{
-        type:DataTypes.STRING,
-        allowNull: false
+    phoneNumber: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
-    Password:{
-        type:DataTypes.STRING
+    password: {
+        type: DataTypes.STRING,
+        allowNull:false,
     },
-    Specialty: {
+    doctor_code: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true, // Add primaryKey constraint
+        unique: true,     // Add unique constraint
+      },
+    hospital: {
         type: DataTypes.STRING,
     },
-    Hospital: {
-        type: DataTypes.STRING
-    },
-    About: {
+    about: {
         type: DataTypes.TEXT,
     },
-    AvailableTimes: {
-        type: DataTypes.JSON, // Store available times as JSON data
+
+    profilePicture: {
+        type: DataTypes.STRING, // New field for profile picture URL
     },
-})
+    serviceAt: {
+        type: DataTypes.JSON, // List of hospitals the doctor services at
+    },
+    specialties: {
+        type: DataTypes.STRING,
+    },
+    lastLogin: {
+        type: DataTypes.DATE,
+    },
+    status: {
+        type: DataTypes.BOOLEAN,
+        default:false,
+    },
+    totalRating: {
+        type:  DataTypes.DECIMAL,
+        defaultValue: 0, // Set an appropriate default value
+      },
 
-Doctors.sync().then(()=>{
-    console.log('Doctors model synced')
-})
+      totalAppointmentsBooked: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0, // Set an appropriate default value
+      },
 
+    isPharmacyOwner: {
+        type: DataTypes.BOOLEAN,
+        default:false
+    },
+    pharmacyCode: {
+        type: DataTypes.STRING,
+    },
+    reviewComments: {
+        type: DataTypes.TEXT,
+      },
+}, {
+    indexes: [
+      // Index for the 'email' field for quick lookup by email
+      {
+        unique: true,
+        fields: ['email']
+      },
+      // Index for the 'doctor_code' field for quick lookup by doctor code
+      {
+        unique: true,
+        fields: ['doctor_code']
+      },
+      // Index for the 'fullName' field for partial search by name
+      {
+        fields: ['fullName']
+      },
+      // Index for the 'hospital' field for quick lookup by hospital name
+      {
+        fields: ['hospital']
+      },
+      // Index for the 'status' field for filtering active/inactive doctors
+      {
+        fields: ['status']
+      },
+      // Composite index for multiple fields (example: 'status' and 'isPharmacyOwner')
+      {
+        fields: ['status', 'isPharmacyOwner']
+      }
+    ]
+  });
 
+Doctors.sync().then(() => {
+    console.log('Doctors model synced');
+});
 
-module.exports = Doctors
+module.exports = Doctors;
