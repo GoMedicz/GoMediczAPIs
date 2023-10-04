@@ -60,4 +60,4 @@ module.exports = { sq: sequelize, testDbConnection };
 //   }
 // };
 
-module.exports = { sq: sequelize, testDbConnection };
+// module.exports = { sq: sequelize, testDbConnection };

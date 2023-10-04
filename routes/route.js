@@ -13,23 +13,24 @@ const {
   docValidation,
   userValidation,
   loginValidate,
+  userOtpValidation
 } = require("../middlewares/userValidator");
 
 const auth = new Auth();
 //register new users
-authRouter.post("/reg_user", userAuth.Reg);
+authRouter.post("/reg_user",userValidation, userAuth.Reg);
 //login user
 authRouter.post("/login_user", loginValidate, userAuth.login);
 //logout user
 authRouter.post("/log_out", userAuth.logOut);
 //verify user otp
-authRouter.post("/reg_user/verify_otp", userAuth.verifyOtp);
+authRouter.post("/reg_user/verify_otp",userOtpValidation, userAuth.verifyOtp);
 //reg doctors
 authRouter.post("/doctor_reg",docValidation, docAuth.doctorReg);
 //verify doctors otp
-authRouter.post("/verify/doc_otp", docAuth.verifyDoctorOtp);
+authRouter.post("/verify/doc_otp",userOtpValidation, docAuth.verifyDoctorOtp);
 //login doctors
-authRouter.post("/doctor/login",docLogin, docAuth.Doclogin);
+authRouter.post("/doctor/login",   loginValidate, docAuth.Doclogin);
 //logout doctors
 authRouter.post("/doctor/logout",auth.tokenRequired, docAuth.DoclogOut);
 //get doctor's profile

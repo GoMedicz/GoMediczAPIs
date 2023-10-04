@@ -6,7 +6,7 @@ const utils = new Utils
 const validation = joi.object({
     // Name: joi.string().trim(true).required(),
     email: joi.string().email().trim(true).required(),
-    // otp:joi.string().required(),
+    otp:joi.string().required(),
     phoneNumber: joi.string().required(),
     // Password: joi.string().min(5).required(),
     // confirmPassword: joi.string().min(5).required()
@@ -28,7 +28,7 @@ const validation = joi.object({
   };
 
   const LoginValidation = joi.object({
-    email: joi.string().email().trim(true).required(),
+    phoneNumber: joi.string().trim().required(),
     password: joi.string().min(5).required()
   });
 
@@ -50,7 +50,6 @@ const validation = joi.object({
   const verifyOtpVal = joi.object({
     fullName: joi.string().trim(true).required(),
     email: joi.string().email().trim(true).required(),
-    otp:joi.string().required(),
     phoneNumber: joi.string().required(),
     password: joi.string().min(5).required(),
     confirmPassword: joi.string().min(5).required()
@@ -98,7 +97,7 @@ const validation = joi.object({
 
 
   const doctorLogin = joi.object({
-    phoneNumber: joi.string().email().trim(true).required(),
+    phoneNumber: joi.string().trim(true).required(),
     password: joi.string().min(5).required(),
   });
 
@@ -155,6 +154,7 @@ const validation = joi.object({
     loginValidate,
     userOtpValidation,
     docValidation,
-    docLogin
+    docLogin,
+  
     // updateDoctorProfileValidation
   }
