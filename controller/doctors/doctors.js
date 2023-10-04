@@ -117,7 +117,7 @@ const Doclogin = async (req, res) => {
     if (!phoneNumber || !password) {
       return res.status(400).json({
         status: false,
-        message: "invalid credentials",
+        message: " see invalid credentials",
         error: utils.getMessage(" DATA_VALIDATION_ERROR"),
       });
     }

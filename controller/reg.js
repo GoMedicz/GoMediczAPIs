@@ -97,8 +97,8 @@ const verifyOtp = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
+    const { phoneNumber, password } = req.body;
+    if (!phoneNumber || !password) {
       return res.status(400).json({
         status: false,
         message: "invalid credentials",
@@ -106,7 +106,7 @@ const login = async (req, res) => {
       });
     }
     //find user
-    const user = await User.findOne({ where: { email: email } });
+    const user = await User.findOne({ where: { phoneNumber: phoneNumber } });
     if (!user) {
       return res.status(400).json({
         status: false,
