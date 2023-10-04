@@ -71,12 +71,9 @@ const validation = joi.object({
   };
 
   const doctorRegVal = joi.object({
-    fullName: joi.string().trim(true).required(),
     email: joi.string().email().trim(true).required(),
     otp:joi.string().required(),
     phoneNumber: joi.string().required(),
-    password: joi.string().min(5).required(),
-    confirmPassword: joi.string().min(5).required()
   });
 
   const docValidation = async (req, res, next) => {

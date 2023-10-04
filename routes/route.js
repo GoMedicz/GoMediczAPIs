@@ -35,6 +35,8 @@ authRouter.post("/doctor/login",   loginValidate, docAuth.Doclogin);
 authRouter.post("/doctor/logout",auth.tokenRequired, docAuth.DoclogOut);
 //get doctor's profile
 authRouter.get("/get_doctor/profile/:doctorCode",auth.tokenRequired, docAuth.DoctorProfile);
+//get doctor by phone
+authRouter.get("/get_doctor_by_phone/profile/:phoneNumber",auth.tokenRequired, docAuth.getDoctorByPhoneNumber);
 //update doctors profile
 authRouter.post(
   "/update_doctor/profile",
