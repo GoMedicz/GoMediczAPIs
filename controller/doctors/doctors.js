@@ -29,6 +29,12 @@ const generateDoctorCode = () => {
 
 const sendOtp = async (phoneNumber, otp) => {
   try {
+    // Check if the phoneNumber starts with '+234' or '234' (with or without the plus sign)
+    if (!phoneNumber.startsWith('+234') && !phoneNumber.startsWith('234')) {
+      // If not, prepend '+234' to the phoneNumber
+      phoneNumber = '+234' + phoneNumber;
+    }
+
     const message = await twilioClient.messages.create({
       body: `Your OTP: ${otp}`,
       from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
@@ -42,9 +48,12 @@ const sendOtp = async (phoneNumber, otp) => {
   }
 };
 
+
 const doctorReg = async (req, res) => {
   try {
     const data = req.body;
+
+
 
     const existingUser = await Doctors.findOne({
       $or: [{ email: data.email }, { phoneNumber: data.phoneNumber }],
@@ -59,7 +68,7 @@ const doctorReg = async (req, res) => {
 
     // Send OTP to the user's phone number
     await sendOtp(data.phoneNumber, data.otp);
-    console.log("OTP sent successfully");
+
 
     // Return success response
     return res.status(200).json({ message: "OTP sent successfully" });
@@ -75,6 +84,7 @@ const doctorReg = async (req, res) => {
 
 const verifyDoctorOtp = async (req, res) => {
   try {
+     console.log("Inside verifyDoctorOtp function");
     const data = req.body; // Store the entire req.body object in 'data'
 
     // Verify OTP on the frontend
@@ -114,10 +124,11 @@ const verifyDoctorOtp = async (req, res) => {
       token: token,
     });
   } catch (error) {
+    console.error("Error in verifying user:", error);
     return res.status(500).json({
       status: false,
       message: "Unable to verify user",
-      error: utils.getMessage("UNKNOWN_ERROR"),
+      error: error.message, // Include the error message in the response
     });
   }
 };

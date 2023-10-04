@@ -74,7 +74,7 @@ const Ratings = sq.define('tbl_ratings', {
       autoIncrement: true,
     },
     doctorCode: { // Updated to match the column name in Doctors table
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
       references: {
         model: 'tbl_doctors', // Use the Doctors model for reference

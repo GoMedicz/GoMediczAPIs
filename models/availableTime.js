@@ -5,7 +5,7 @@ const Doctors = require('./doctor_reg')
 
 const AvailableTimes = sq.define('tbl_available_times', {
   doctor_code: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
   },
   available_days: {
     type: DataTypes.JSON,
