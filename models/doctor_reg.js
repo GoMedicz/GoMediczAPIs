@@ -16,15 +16,15 @@ const Doctors = sq.define('tbl_doctors',{
     phoneNumber: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique:true
     },
     password: {
         type: DataTypes.STRING,
         allowNull:false,
     },
     doctor_code: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true, // Add primaryKey constraint
         unique: true,     // Add unique constraint
       },

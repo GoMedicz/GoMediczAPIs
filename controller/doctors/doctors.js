@@ -2,14 +2,13 @@ const Doctors = require("../../models/doctor_reg");
 const bcrypt = require("bcrypt");
 const { Auth } = require("../../middlewares/auth");
 const { Utils } = require("../../middlewares/utils");
-const {Ratings} = require("../../models/users");
-const AvailableTimes = require("../../models/availableTime")
+const { Ratings } = require("../../models/users");
+const AvailableTimes = require("../../models/availableTime");
 const _ = require("lodash");
-const moment = require('moment');
-const upload = require('../multerConfig');
+const moment = require("moment");
+const upload = require("../multerConfig");
 // const Sequelize = require('sequelize')
-const { Op } = require('sequelize')
-
+const { Op } = require("sequelize");
 
 const utils = new Utils();
 const auth = new Auth();
@@ -17,6 +16,16 @@ const twilio = require("twilio");
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const twilioClient = twilio(accountSid, authToken);
+
+const generateDoctorCode = () => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    code += characters.charAt(randomIndex);
+  }
+  return code;
+};
 
 const sendOtp = async (phoneNumber, otp) => {
   try {
@@ -64,7 +73,6 @@ const doctorReg = async (req, res) => {
   }
 };
 
-
 const verifyDoctorOtp = async (req, res) => {
   try {
     const data = req.body; // Store the entire req.body object in 'data'
@@ -86,13 +94,16 @@ const verifyDoctorOtp = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    // Create the user in the database
+    const doctorCode = generateDoctorCode();
     const newDoctor = await Doctors.create({
+      doctor_code: doctorCode,
       phoneNumber: data.phoneNumber,
       email: data.email,
       fullName: data.fullName,
       password: hashedPassword,
     });
+
+    // Create the user in the database
 
     // Generate token
     const token = auth.generateAuthToken(newDoctor);
@@ -122,7 +133,9 @@ const Doclogin = async (req, res) => {
       });
     }
     //find user
-    const doctors = await Doctors.findOne({ where: { phoneNumber: phoneNumber } });
+    const doctors = await Doctors.findOne({
+      where: { phoneNumber: phoneNumber },
+    });
     if (!doctors) {
       return res.status(400).json({
         status: false,
@@ -156,34 +169,32 @@ const Doclogin = async (req, res) => {
   }
 };
 
-
-
-
-
 const updateDoctorProfile = async (req, res) => {
   try {
     // Use Multer middleware to handle file uploads
-    upload.single('profilePicture')(req, res, async (err) => {
+    upload.single("profilePicture")(req, res, async (err) => {
       if (err) {
         return res.status(400).json({
           status: false,
-          message: 'Profile picture upload failed',
+          message: "Profile picture upload failed",
           error: err.message,
         });
       }
 
       const data = req.body;
-      const existingDoctor = await Doctors.findOne({ where: { email: data.email } });
+      const existingDoctor = await Doctors.findOne({
+        where: { email: data.email },
+      });
 
       if (!existingDoctor) {
         return res.status(404).json({
           status: false,
-          message: 'Doctor not found',
+          message: "Doctor not found",
         });
       }
 
       // Format the "lastLogin" timestamp
-      const formattedLastLogin = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
+      const formattedLastLogin = moment().format("YYYY-MM-DD HH:mm:ss.SSS");
 
       // Update the doctor's profile (excluding availableTimes) with the formatted "lastLogin"
       const updatedDoctor = await existingDoctor.update(
@@ -222,7 +233,7 @@ const updateDoctorProfile = async (req, res) => {
 
       return res.status(200).json({
         status: true,
-        message: 'Doctor profile updated successfully',
+        message: "Doctor profile updated successfully",
         data: responseData,
       });
     });
@@ -230,12 +241,11 @@ const updateDoctorProfile = async (req, res) => {
     console.error(error);
     return res.status(500).json({
       status: false,
-      message: 'Unable to update doctor profile',
+      message: "Unable to update doctor profile",
       error: error.message,
     });
   }
 };
-
 
 const submitRating = async (req, res) => {
   try {
@@ -245,7 +255,7 @@ const submitRating = async (req, res) => {
     if (!data.rating || !data.reviewComments) {
       return res.status(400).json({
         status: false,
-        message: 'Rating and reviewComments are required',
+        message: "Rating and reviewComments are required",
       });
     }
 
@@ -256,7 +266,7 @@ const submitRating = async (req, res) => {
     if (!existingDoctor) {
       return res.status(404).json({
         status: false,
-        message: 'Doctor not found',
+        message: "Doctor not found",
       });
     }
 
@@ -269,25 +279,24 @@ const submitRating = async (req, res) => {
     });
 
     // Update the totalRating and totalAppointmentsBooked fields in the Doctors model
-    await Doctors.increment('totalRating', {
+    await Doctors.increment("totalRating", {
       by: data.rating,
       where: { doctor_code: data.doctorCode },
     });
 
     return res.status(200).json({
       status: true,
-      message: 'Rating submitted successfully',
+      message: "Rating submitted successfully",
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       status: false,
-      message: 'Failed to submit rating',
+      message: "Failed to submit rating",
       error: error.message,
     });
   }
 };
-
 
 const DoctorProfile = async (req, res) => {
   try {
@@ -296,7 +305,7 @@ const DoctorProfile = async (req, res) => {
     // Query Ratings table to get all ratings for the doctor
     const ratings = await Ratings.findAll({
       where: { doctorCode: doctorCode },
-      attributes: ['rating'],
+      attributes: ["rating"],
     });
 
     // Calculate average rating
@@ -308,34 +317,33 @@ const DoctorProfile = async (req, res) => {
     const doctorProfile = await Doctors.findOne({
       where: { doctor_code: doctorCode },
       attributes: [
-        'fullName',
-        'email',
-        'phoneNumber',
-        'hospital',
-        'about',
-        'totalRating',
-        'totalAppointmentsBooked',
-        'reviewComments',
-        'isPharmacyOwner',
-        'pharmacyCode',
-        'serviceAt',
-        'specialties',
-        'lastLogin',
-        'status'
-
+        "fullName",
+        "email",
+        "phoneNumber",
+        "hospital",
+        "about",
+        "totalRating",
+        "totalAppointmentsBooked",
+        "reviewComments",
+        "isPharmacyOwner",
+        "pharmacyCode",
+        "serviceAt",
+        "specialties",
+        "lastLogin",
+        "status",
       ],
     });
 
     if (!doctorProfile) {
       return res.status(404).json({
         status: false,
-        message: 'Doctor profile not found',
+        message: "Doctor profile not found",
       });
     }
 
     return res.status(200).json({
       status: true,
-      message: 'Doctor profile retrieved successfully',
+      message: "Doctor profile retrieved successfully",
       data: {
         ...doctorProfile.dataValues,
         averageRating: averageRating,
@@ -345,14 +353,39 @@ const DoctorProfile = async (req, res) => {
     console.error(error);
     return res.status(500).json({
       status: false,
-      message: 'Failed to retrieve doctor profile',
+      message: "Failed to retrieve doctor profile",
       error: error.message,
     });
   }
 };
 
 
+const getDoctorByPhoneNumber = async (req, res) => {
+  try {
+    const phoneNumber = req.params.phoneNumber;
+    const doctor = await Doctors.findOne({ where: { phoneNumber: phoneNumber } });
 
+    if (!doctor) {
+      return res.status(404).json({
+        status: false,
+        message: 'Doctor not found',
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: 'Doctor information retrieved successfully',
+      data: doctor,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: false,
+      message: 'Failed to retrieve doctor information',
+      error: error.message,
+    });
+  }
+};
 
 
 const searchDoctors = async (req, res) => {
@@ -387,7 +420,7 @@ const searchDoctors = async (req, res) => {
 
     return res.status(200).json({
       status: true,
-      message: 'Search results retrieved successfully',
+      message: "Search results retrieved successfully",
       data: doctors,
     });
   } catch (error) {
@@ -399,7 +432,6 @@ const searchDoctors = async (req, res) => {
     });
   }
 };
-
 
 const DoclogOut = async (req, res) => {
   try {
@@ -437,4 +469,5 @@ module.exports = {
   searchDoctors,
   DoctorProfile,
   submitRating,
+  getDoctorByPhoneNumber
 };
