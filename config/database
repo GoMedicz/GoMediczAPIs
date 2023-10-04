@@ -5,10 +5,10 @@ const { Sequelize } = require("sequelize");
 const sequelize = new Sequelize({
 
   dialect: "postgres",
-  host: "containers-us-west-90.railway.app",
-  port: 6678, // The PostgreSQL default port
+  host: "containers-us-west-192.railway.app",
+  port: 7014, // The PostgreSQL default port
   username: "postgres",
-  password: "Oyj1micX1m51DGvUH3nj",
+  password: "kIs5lyT4qRKMdab6BRrY",
   database: "railway",
 
   pool: {
@@ -60,4 +60,4 @@ module.exports = { sq: sequelize, testDbConnection };
 //   }
 // };
 
-// module.exports = { sq: sequelize, testDbConnection };
+module.exports = { sq: sequelize, testDbConnection };

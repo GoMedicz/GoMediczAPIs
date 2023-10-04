@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "password",
+    "database": "gomedicz",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "password",
+    "database": "gomedicz_test",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "your_production_db_username",
+    "password": "your_production_db_password",
+    "database": "your_production_db_name",
+    "host": "your_production_db_host",
+    "dialect": "postgres"
+  }
+}
