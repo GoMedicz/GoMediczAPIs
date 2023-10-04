@@ -25,7 +25,7 @@ const Appointments = sq.define('tbl_appointments', {
       type: DataTypes.STRING, // Path to lab report PDF files
     },
     doctorCode: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
       references: {
         model: 'tbl_doctors',

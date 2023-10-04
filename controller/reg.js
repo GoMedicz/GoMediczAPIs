@@ -13,6 +13,12 @@ const twilioClient = twilio(accountSid, authToken);
 
 const sendOtp = async (phoneNumber, otp) => {
   try {
+    // Check if the phoneNumber starts with '+234' or '234' (with or without the plus sign)
+    if (!phoneNumber.startsWith('+234') && !phoneNumber.startsWith('234')) {
+      // If not, prepend '+234' to the phoneNumber
+      phoneNumber = '+234' + phoneNumber;
+    }
+
     const message = await twilioClient.messages.create({
       body: `Your OTP: ${otp}`,
       from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
