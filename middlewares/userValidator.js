@@ -52,7 +52,7 @@ const validation = joi.object({
     email: joi.string().email().trim(true).required(),
     phoneNumber: joi.string().required(),
     password: joi.string().min(5).required(),
-    confirmPassword: joi.string().min(5).required()
+
   });
 
   const userOtpValidation = async (req, res, next) => {
@@ -71,7 +71,6 @@ const validation = joi.object({
   };
 
   const doctorRegVal = joi.object({
-    email: joi.string().email().trim(true).required(),
     otp:joi.string().required(),
     phoneNumber: joi.string().required(),
   });

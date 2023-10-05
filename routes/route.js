@@ -17,18 +17,21 @@ const {
 } = require("../middlewares/userValidator");
 
 const auth = new Auth();
+
 //register new users
-authRouter.post("/api/reg/user",userValidation, userAuth.Reg);
+authRouter.post("/api/reg/user/otp",userValidation, userAuth.Reg);
 //login user
 authRouter.post("/api/login/user", loginValidate, userAuth.login);
 //logout user
 authRouter.post("/api/log/out", userAuth.logOut);
 //verify user otp
-authRouter.post("/api/reg/user/verify/otp",userOtpValidation, userAuth.verifyOtp);
+authRouter.post("/api/reg/user/verification",userOtpValidation, userAuth.verifyOtp);
+//verify doctor exists with phone
+authRouter.post("/api/verify/doc/phoneNumber", docAuth.verifyDoctorWithPhone);
 //reg doctors
-authRouter.post("/api/doctor/reg",docValidation, docAuth.doctorReg);
+authRouter.post("/api/doctor/reg/otp",docValidation, docAuth.doctorReg);
 //verify doctors otp
-authRouter.post("/api/verify/doc/otp",userOtpValidation, docAuth.verifyDoctorOtp);
+authRouter.post("/api/doc/verification",userOtpValidation, docAuth.verifyDoctorOtp);
 //login doctors
 authRouter.post("/api/doctor/login",   loginValidate, docAuth.Doclogin);
 //logout doctors
