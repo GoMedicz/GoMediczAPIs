@@ -47,28 +47,54 @@ const sendOtp = async (phoneNumber, otp) => {
     throw error;
   }
 };
+const verifyDoctorWithPhone = async (req, res) => {
+  try {
+    const { phoneNumber } = req.body;
 
+    // Check if a doctor with the provided phoneNumber exists
+    const existingDoctor = await Doctors.findOne({
+      where: { phoneNumber: phoneNumber },
+    });
+
+    if (existingDoctor) {
+      return res.status(200).json({
+        message: "Doctor with this phone number exists",
+        doctor: existingDoctor,
+      });
+    } else {
+      return res.status(404).json({
+        message: "Doctor with this phone number does not exist",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: false,
+      message: "Unable to check doctor existence",
+      error: "UNKNOWN_ERROR",
+    });
+
+}
+}
 
 const doctorReg = async (req, res) => {
   try {
     const data = req.body;
 
-
-
+    // Check if a user with the same phoneNumber already exists
     const existingUser = await Doctors.findOne({
-      $or: [{ email: data.email }, { phoneNumber: data.phoneNumber }],
+      where: { phoneNumber: data.phoneNumber },
     });
 
     if (existingUser) {
       return res.status(409).json({
-        message: "User with this email or phone number already exists",
+        message: "User with this phone number already exists",
         error: utils.getMessage("USER_ALREADY_EXISTS"),
       });
     }
 
     // Send OTP to the user's phone number
     await sendOtp(data.phoneNumber, data.otp);
-
 
     // Return success response
     return res.status(200).json({ message: "OTP sent successfully" });
@@ -82,9 +108,10 @@ const doctorReg = async (req, res) => {
   }
 };
 
+
 const verifyDoctorOtp = async (req, res) => {
   try {
-     console.log("Inside verifyDoctorOtp function");
+
     const data = req.body; // Store the entire req.body object in 'data'
 
     // Verify OTP on the frontend
@@ -480,5 +507,6 @@ module.exports = {
   searchDoctors,
   DoctorProfile,
   submitRating,
-  getDoctorByPhoneNumber
+  getDoctorByPhoneNumber,
+  verifyDoctorWithPhone
 };
