@@ -19,7 +19,7 @@ const getBanks = async (req, res)=>{
 
 
     const banks = response.data.data;
-    console.log(banks)
+
     res.json({ banks });
     } catch (error) {
         res.status(500).json({
