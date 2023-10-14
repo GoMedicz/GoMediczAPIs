@@ -41,7 +41,7 @@ const Appointments = sq.define('tbl_appointments', {
       },
     },
   });
-  
+
 
   Appointments.sync().then(() => {
     console.log('appointments model synced');

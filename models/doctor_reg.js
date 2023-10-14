@@ -38,11 +38,14 @@ const Doctors = sq.define('tbl_doctors',{
     profilePicture: {
         type: DataTypes.STRING, // New field for profile picture URL
     },
+    gender: {
+      type: DataTypes.STRING,
+  },
     serviceAt: {
         type: DataTypes.JSON, // List of hospitals the doctor services at
     },
     specialties: {
-        type: DataTypes.STRING,
+        type: DataTypes.JSON,
     },
     lastLogin: {
         type: DataTypes.DATE,

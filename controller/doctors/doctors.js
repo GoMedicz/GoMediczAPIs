@@ -27,26 +27,26 @@ const generateDoctorCode = () => {
   return code;
 };
 
-const sendOtp = async (phoneNumber, otp) => {
-  try {
-    // Check if the phoneNumber starts with '+234' or '234' (with or without the plus sign)
-    if (!phoneNumber.startsWith('+234') && !phoneNumber.startsWith('234')) {
-      // If not, prepend '+234' to the phoneNumber
-      phoneNumber = '+234' + phoneNumber;
-    }
+// const sendOtp = async (phoneNumber, otp) => {
+//   try {
+//     // Check if the phoneNumber starts with '+234' or '234' (with or without the plus sign)
+//     if (!phoneNumber.startsWith('+234') && !phoneNumber.startsWith('234')) {
+//       // If not, prepend '+234' to the phoneNumber
+//       phoneNumber = '+234' + phoneNumber;
+//     }
 
-    const message = await twilioClient.messages.create({
-      body: `Your OTP: ${otp}`,
-      from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
-      to: phoneNumber,
-    });
+//     const message = await twilioClient.messages.create({
+//       body: `Your OTP: ${otp}`,
+//       from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
+//       to: phoneNumber,
+//     });
 
-    console.log(message.sid);
-  } catch (error) {
-    console.error("Error sending OTP:", error);
-    throw error;
-  }
-};
+//     console.log(message.sid);
+//   } catch (error) {
+//     console.error("Error sending OTP:", error);
+//     throw error;
+//   }
+// };
 const verifyDoctorWithPhone = async (req, res) => {
   try {
     const { phoneNumber } = req.body;
@@ -77,45 +77,44 @@ const verifyDoctorWithPhone = async (req, res) => {
 }
 }
 
+// const doctorReg = async (req, res) => {
+//   try {
+//     const data = req.body;
+
+//     // Check if a user with the same phoneNumber already exists
+//     const existingUser = await Doctors.findOne({
+//       where: { phoneNumber: data.phoneNumber },
+//     });
+
+//     if (existingUser) {
+//       return res.status(409).json({
+//         message: "User with this phone number already exists",
+//         error: utils.getMessage("USER_ALREADY_EXISTS"),
+//       });
+//     }
+
+//     // Send OTP to the user's phone number
+//     await sendOtp(data.phoneNumber, data.otp);
+
+//     // Return success response
+//     return res.status(200).json({ message: "OTP sent successfully" });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({
+//       status: false,
+//       message: "Unable to register user",
+//       error: utils.getMessage("UNKNOWN_ERROR"),
+//     });
+//   }
+// };
+
+
 const doctorReg = async (req, res) => {
-  try {
-    const data = req.body;
-
-    // Check if a user with the same phoneNumber already exists
-    const existingUser = await Doctors.findOne({
-      where: { phoneNumber: data.phoneNumber },
-    });
-
-    if (existingUser) {
-      return res.status(409).json({
-        message: "User with this phone number already exists",
-        error: utils.getMessage("USER_ALREADY_EXISTS"),
-      });
-    }
-
-    // Send OTP to the user's phone number
-    await sendOtp(data.phoneNumber, data.otp);
-
-    // Return success response
-    return res.status(200).json({ message: "OTP sent successfully" });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: false,
-      message: "Unable to register user",
-      error: utils.getMessage("UNKNOWN_ERROR"),
-    });
-  }
-};
-
-
-const verifyDoctorOtp = async (req, res) => {
   try {
 
     const data = req.body; // Store the entire req.body object in 'data'
 
-    // Verify OTP on the frontend
-    // ...
+  
     // Check if a user with the same phoneNumber already exists
     const existingUser = await Doctors.findOne({
       where: { phoneNumber: data.phoneNumber },
@@ -160,7 +159,7 @@ const verifyDoctorOtp = async (req, res) => {
   }
 };
 
-const Doclogin = async (req, res) => {
+const docLogin = async (req, res) => {
   try {
     const { phoneNumber, password } = req.body;
     if (!phoneNumber || !password) {
@@ -196,6 +195,7 @@ const Doclogin = async (req, res) => {
       status: true,
       message: "login succesfull",
       token: token,
+      doctor_code:doctors.doctor_code
     });
   } catch (error) {
     console.log(error);
@@ -471,7 +471,7 @@ const searchDoctors = async (req, res) => {
   }
 };
 
-const DoclogOut = async (req, res) => {
+const docLogOut = async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
     if (auth.isTokenInvalid(token)) {
@@ -500,9 +500,8 @@ const DoclogOut = async (req, res) => {
 
 module.exports = {
   doctorReg,
-  verifyDoctorOtp,
-  Doclogin,
-  DoclogOut,
+  docLogin,
+  docLogOut,
   updateDoctorProfile,
   searchDoctors,
   DoctorProfile,

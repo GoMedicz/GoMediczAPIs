@@ -34,8 +34,8 @@ const sendOtp = async (phoneNumber, otp) => {
 
 const Reg = async (req, res) => {
   try {
-    const { email, phoneNumber } = req.body;
-    if (!email || !phoneNumber) {
+    const { phoneNumber } = req.body;
+    if (!phoneNumber) {
       return res.status(401).json({
         message: "fields cannot be empty",
         error: utils.getMessage("DATA_ERROR"),
@@ -44,7 +44,7 @@ const Reg = async (req, res) => {
     const existingUser = await User.findOne({ where: { phoneNumber: phoneNumber } });
     if (existingUser) {
       return res.status(409).json({
-        message: "User with this email or phone number already exists",
+        message: "User with this phone number already exists",
         error: utils.getMessage("ACCOUNT_EXISTS_ERROR"),
       });
     }
@@ -68,19 +68,29 @@ const Reg = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    const { email, phoneNumber, otp, password, confirmPassword } = req.body;
+    const data = req.body;
 
     // Verify OTP on the frontend
     // ...
+    const existingUser = await User.findOne({
+      where: { phoneNumber: data.phoneNumber },
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        message: "User with this phone number already exists",
+        error: utils.getMessage("USER_ALREADY_EXISTS"),
+      });
+    }
 
     // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(data.password, 10);
 
     // Create the user in the database
     const newUser = await User.create({
-      phoneNumber: phoneNumber,
-      email: email,
-      name: req.body.name,
+      fullName:data.fullName,
+      phoneNumber: data.phoneNumber,
+      email: data.email,
       password: hashedPassword,
     });
 
