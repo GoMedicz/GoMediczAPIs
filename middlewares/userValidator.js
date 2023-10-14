@@ -151,6 +151,7 @@ const validation = joi.object({
     userOtpValidation,
     docValidation,
     docLogin,
+    doctorRegVal
   
     // updateDoctorProfileValidation
   }

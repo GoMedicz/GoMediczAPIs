@@ -6,7 +6,7 @@ const Doctors = require("./doctor_reg")
 
 
 const User = sq.define('tbl_users',{
-    name:{
+    fullName:{
         type:DataTypes.STRING,
         allowNull: false,
 
@@ -47,7 +47,7 @@ const User = sq.define('tbl_users',{
       },
       // Index for the 'name' field for partial search by name
       {
-        fields: ['name']
+        fields: ['fullName']
       },
       // Composite index for multiple fields (example: 'homeAddress' and 'workAddress')
       {

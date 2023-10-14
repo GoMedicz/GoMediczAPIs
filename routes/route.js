@@ -9,17 +9,14 @@ const lab = require("../controller/Labs/labs");
 const support = require("../controller/support");
 const appointment = require("../controller/doctors/appointment")
 const {
-  docLogin,
-  docValidation,
-  userValidation,
   loginValidate,
   userOtpValidation
 } = require("../middlewares/userValidator");
 
 const auth = new Auth();
 
-//register new users
-authRouter.post("/api/reg/user/otp",userValidation, userAuth.Reg);
+//register new users-send otp
+authRouter.post("/api/reg/user/otp", userAuth.Reg);
 //login user
 authRouter.post("/api/login/user", loginValidate, userAuth.login);
 //logout user
@@ -29,13 +26,13 @@ authRouter.post("/api/reg/user/verification",userOtpValidation, userAuth.verifyO
 //verify doctor exists with phone
 authRouter.post("/api/verify/doc/phoneNumber", docAuth.verifyDoctorWithPhone);
 //reg doctors
-authRouter.post("/api/doctor/reg/otp",docValidation, docAuth.doctorReg);
+authRouter.post("/api/doctor/reg",userOtpValidation, docAuth.doctorReg);
 //verify doctors otp
-authRouter.post("/api/doc/verification",userOtpValidation, docAuth.verifyDoctorOtp);
+// authRouter.post("/api/doc/verification",userOtpValidation, docAuth.verifyDoctorOtp);
 //login doctors
-authRouter.post("/api/doctor/login",   loginValidate, docAuth.Doclogin);
+authRouter.post("/api/doctor/login",   loginValidate, docAuth.docLogin);
 //logout doctors
-authRouter.post("/api/doctor/logout",auth.tokenRequired, docAuth.DoclogOut);
+authRouter.post("/api/doctor/logout",auth.tokenRequired, docAuth.docLogOut);
 //get doctor's profile
 authRouter.get("/api/doctor/profile/:doctorCode",auth.tokenRequired, docAuth.DoctorProfile);
 //get doctor by phone
@@ -51,9 +48,9 @@ authRouter.post("/api/submit/rating", auth.tokenRequired, docAuth.submitRating);
 //search doctors
 authRouter.get("/api/search/doctors", auth.tokenRequired, docAuth.searchDoctors);
 //get all banks
-authRouter.get("/api/allbanks", auth.tokenRequired, bank.getBanks);
+authRouter.get("/api/allbanks", bank.getBanks);
 //verify banks
-authRouter.post("/api/verifybank", auth.tokenRequired, bank.verifyBank);
+authRouter.post("/api/verifybank", bank.verifyBank);
 //register hospitals
 authRouter.post("/api/reg/Hospital",auth.tokenRequired, hospital.createHospitalProfile);
 //update hospital
