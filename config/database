@@ -9,7 +9,7 @@ const sequelize = new Sequelize({
   port: 5432, // The PostgreSQL default port
   username: "postgres",
   password: "password",
-  database: "gomedicz",
+  database: "Gomedicz",
 
   pool: {
     max: 5,
