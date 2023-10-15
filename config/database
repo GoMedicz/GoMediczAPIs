@@ -5,11 +5,11 @@ const { Sequelize } = require("sequelize");
 const sequelize = new Sequelize({
 
   dialect: "postgres",
-  host: "ec2-16-170-226-180.eu-north-1.compute.amazonaws.com",
+  host: "xv1gg.czmqeftbyotf.eu-west-1.rds.amazonaws.com",
   port: 5432, // The PostgreSQL default port
   username: "postgres",
   password: "password",
-  database: "Gomedicz",
+  database: "Gomedx1",
 
   pool: {
     max: 5,
