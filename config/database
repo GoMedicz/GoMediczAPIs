@@ -10,6 +10,11 @@ const sequelize = new Sequelize({
   username: "postgres",
   password: "password",
   database: "Gomedx1",
+  ssl: true,               // Enable SSL
+  dialectOptions: {
+    ssl: { rejectUnauthorized: false } // Ignore certificate validation
+  },
+
 
   pool: {
     max: 5,
