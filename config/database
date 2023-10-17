@@ -9,7 +9,7 @@ const sequelize = new Sequelize({
   port: 5432, // The PostgreSQL default port
   username: "postgres",
   password: "password",
-  database: "Gomedx1",
+  database: "Gomedx2",
   ssl: true,               // Enable SSL
   dialectOptions: {
     ssl: { rejectUnauthorized: false } // Ignore certificate validation
