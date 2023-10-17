@@ -23,6 +23,9 @@ const User = sq.define('tbl_users',{
     password:{
         type:DataTypes.STRING
     },
+    gender:{
+      type:DataTypes.STRING
+  },
     homeAddress: {
         type: DataTypes.STRING,
     },
