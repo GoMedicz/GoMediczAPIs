@@ -434,7 +434,7 @@ const searchDoctors = async (req, res) => {
   }
 };
 
-const verifyAnyDoctorField = async () => {
+const verifyAnyDoctorField = async (req, res) => {
   try {
     const { fieldName, data } = req.body; // Assuming you're sending a POST request with a JSON body
 
