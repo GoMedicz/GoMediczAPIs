@@ -72,8 +72,10 @@ const Reg = async (req, res) => {
     }
     // Get OTP and PhoneNumber from the frontend
     const { otp } = req.body;
+    
     // Send OTP to the user's phone number
-    await sendOtp(phoneNumber, otp);
+    const otpMessage = `DO NOT DISCLOSE: Use ${otp} as your one-time password to continue your Gomedicz registration`;
+    await sendOtp(phoneNumber, otpMessage);
 
     // Update the response message to include the OTP
     const responseMessage = `DO NOT DISCLOSE: Use ${otp} as your one-time password to continue your Gomedicz registration`;
