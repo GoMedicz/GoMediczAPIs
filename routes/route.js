@@ -20,13 +20,11 @@ authRouter.post("/api/reg/user/otp", userAuth.Reg);
 //verify any field
 authRouter.post(
   "/api/verify/any/user/field",
-  auth.tokenRequired,
   userAuth.verifyAnyUserField
 );
 //update any user field
 authRouter.post(
   "/api/update/any/user/field",
-  auth.tokenRequired,
   userAuth.updateAnyUserField
 );
 //login user
@@ -72,13 +70,11 @@ authRouter.post("/api/submit/rating", auth.tokenRequired, docAuth.submitRating);
 //verify any doctor field
 authRouter.post(
   "/api/verify/any/field/doctor",
-  auth.tokenRequired,
   docAuth.verifyAnyDoctorField
 );
 //update any doctor field
 authRouter.post(
   "/api/update/any/field/doctor",
-  auth.tokenRequired,
   docAuth.updateAnyDoctorField
 );
 //search doctors

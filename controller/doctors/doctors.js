@@ -104,12 +104,12 @@ const doctorReg = async (req, res) => {
     // Create the user in the database
 
     // Generate token
-    const token = auth.generateAuthToken(newDoctor);
+    // const token = auth.generateAuthToken(newDoctor);
 
     return res.status(200).json({
+      status:true,
       message: "Registration successful",
       data: newDoctor,
-      token: token,
       wallet:newDoctor.wallet
     });
   } catch (error) {
@@ -139,6 +139,7 @@ const docLogin = async (req, res) => {
     if (!doctors) {
       return res.status(400).json({
         status: false,
+        statusCode:400,
         message: "Doctor does not exist",
         error: utils.getMessage(" ACCOUNT_EXISTENCE_ERROR"),
       });
@@ -156,6 +157,7 @@ const docLogin = async (req, res) => {
     const token = auth.generateAuthToken(doctors);
     return res.status(200).json({
       status: true,
+      statusCode:200,
       message: "login succesfull",
       token: token,
       doctor_code:doctors.doctor_code,
@@ -165,6 +167,7 @@ const docLogin = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       status: false,
+      statusCode:500,
       message: "login failed",
       error: utils.getMessage("ACCOUNT_EXISTENCE_ERROR"),
     });
@@ -256,6 +259,7 @@ const submitRating = async (req, res) => {
 
     if (!data.rating || !data.reviewComments) {
       return res.status(400).json({
+        statusCode:400,
         status: false,
         message: "Rating and reviewComments are required",
       });
@@ -267,6 +271,7 @@ const submitRating = async (req, res) => {
 
     if (!existingDoctor) {
       return res.status(404).json({
+        statusCode:404,
         status: false,
         message: "Doctor not found",
       });
@@ -287,12 +292,14 @@ const submitRating = async (req, res) => {
     });
 
     return res.status(200).json({
+      statusCode:200,
       status: true,
       message: "Rating submitted successfully",
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
+      statusCode:400,
       status: false,
       message: "Failed to submit rating",
       error: error.message,
@@ -344,6 +351,7 @@ const DoctorProfile = async (req, res) => {
     }
 
     return res.status(200).json({
+      statusCode:200,
       status: true,
       message: "Doctor profile retrieved successfully",
       data: {
@@ -354,6 +362,7 @@ const DoctorProfile = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
+      statusCode:500,
       status: false,
       message: "Failed to retrieve doctor profile",
       error: error.message,
@@ -369,12 +378,14 @@ const getDoctorByPhoneNumber = async (req, res) => {
 
     if (!doctor) {
       return res.status(404).json({
+        statusCode:404,
         status: false,
         message: 'Doctor not found',
       });
     }
 
     return res.status(200).json({
+      statusCode:200,
       status: true,
       message: 'Doctor information retrieved successfully',
       data: doctor,
@@ -382,6 +393,7 @@ const getDoctorByPhoneNumber = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
+      statusCode:500,
       status: false,
       message: 'Failed to retrieve doctor information',
       error: error.message,
@@ -421,12 +433,14 @@ const searchDoctors = async (req, res) => {
     });
 
     return res.status(200).json({
+      statusCode:200,
       status: true,
       message: "Search results retrieved successfully",
       data: doctors,
     });
   } catch (error) {
     return res.status(500).json({
+      statusCode:500,
       status: false,
       message: "Failed to search doctors",
       error: error.message,
@@ -469,12 +483,13 @@ const verifyAnyDoctorField = async (req, res) => {
     });
 
     if (doctor) {
-      return res.status(200).json({ exists: true, message: 'Data exists in the database.' });
+      return res.status(200).json({ statusCode:200, exists: true, message: 'Data exists in the database.' });
     } else {
-      return res.status(400).json({ exists: false, message: 'Data does not exist in the database.' });
+      return res.status(404).json({ statusCode:404, exists: false, message: 'Data does not exist in the database.' });
     }
   } catch (error) {
     return res.status(500).json({
+      statusCode:500,
       status: false,
       message: "Failed to verify field",
       error: error.message,
@@ -521,9 +536,9 @@ const updateAnyDoctorField = async (req, res) => {
     );
 
     if (numOfUpdatedRows > 0) {
-      return res.json({ success: true, message: 'Field updated successfully', updatedDoctors });
+      return res.json({ statusCode:200, success: true, message: 'Field updated successfully', updatedDoctors });
     } else {
-      return res.json({ success: false, message: 'Doctor not found or no changes made' });
+      return res.json({statusCode:404, success: false, message: 'Doctor not found or no changes made' });
     }
   } catch (error) {
     return res.status(500).json({

@@ -55,7 +55,7 @@ const Reg = async (req, res) => {
     const { phoneNumber } = req.body;
     if (!phoneNumber) {
       return res.status(401).json({
-        message: "fields cannot be empty",
+        message: "Fields cannot be empty",
         error: utils.getMessage("DATA_ERROR"),
       });
     }
@@ -72,19 +72,22 @@ const Reg = async (req, res) => {
     const { otp } = req.body;
     // Send OTP to the user's phone number
     await sendOtp(phoneNumber, otp);
-    console.log("something wrong here");
 
-    // Return success response
-    return res.status(200).json({ message: "OTP sent successfully" });
+    // Update the response message to include the OTP
+    const responseMessage = `DO NOT DISCLOSE: Use ${otp} as your one-time password to continue your Gomedicz registration`;
+
+    // Return the modified success response
+    return res.status(200).json({ message: responseMessage, statusCode:200 });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       status: false,
-      message: "unable to register user",
+      message: "Unable to register user",
       error: utils.getMessage("UNKNOWN_ERROR"),
     });
   }
 };
+
 
 const verifyOtp = async (req, res) => {
   try {
@@ -98,6 +101,7 @@ const verifyOtp = async (req, res) => {
 
     if (existingUser) {
       return res.status(409).json({
+        statusCode:409,
         message: "User with this phone number already exists",
         error: "USER_ALREADY_EXISTS", // Provide a specific error code
       });
@@ -121,6 +125,7 @@ const verifyOtp = async (req, res) => {
     const token = auth.generateAuthToken(newUser);
 
     return res.status(200).json({
+      statusCode:200,
       status: true, // Set status to true for success
       message: "Registration successful",
       data: newUser,
@@ -132,6 +137,7 @@ const verifyOtp = async (req, res) => {
   } catch (error) {
     console.error("Error in user creation:", error);
     return res.status(500).json({
+      statusCode:500,
       status: false,
       message: "Registration failed",
       error: "UNKNOWN_ERROR"
@@ -145,6 +151,7 @@ const login = async (req, res) => {
     const { phoneNumber, password } = req.body;
     if (!phoneNumber || !password) {
       return res.status(400).json({
+        statusCode:400,
         status: false,
         message: "invalid credentials",
         error: utils.getMessage(" DATA_VALIDATION_ERROR"),
@@ -154,6 +161,7 @@ const login = async (req, res) => {
     const user = await User.findOne({ where: { phoneNumber: phoneNumber } });
     if (!user) {
       return res.status(400).json({
+        statusCode:400,
         status: false,
         message: "user does not exist",
         error: utils.getMessage(" ACCOUNT_EXISTENCE_ERROR"),
@@ -163,6 +171,7 @@ const login = async (req, res) => {
     const isMatchedPassword = await bcrypt.compare(password, user.password);
     if (!isMatchedPassword) {
       return res.status(400).json({
+        statusCode:400,
         status: false,
         message: "invalid password",
         error: utils.getMessage(" PASSWORD_MATCH_ERROR"),
@@ -171,6 +180,7 @@ const login = async (req, res) => {
     //if password matches, generate a new token and send in the response
     const token = auth.generateAuthToken({ email: user.email });
     return res.status(200).json({
+      statusCode:200,
       status: true,
       message: "login successful",
       token: token,
@@ -179,6 +189,7 @@ const login = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
+      statusCode:500,
       status: false,
       message: "login failed",
       error: utils.getMessage("ACCOUNT_EXISTENCE_ERROR"),
@@ -206,7 +217,7 @@ const verifyAnyUserField = async (req, res) => {
 
     // Check if the provided field name is valid
     if (!fieldToAttributeMap[fieldName]) {
-      return res.status(400).json({ error: "Invalid field name" });
+      return res.status(400).json({statusCode:400, error: "Invalid field name" });
     }
 
     const attribute = fieldToAttributeMap[fieldName];
@@ -229,6 +240,7 @@ const verifyAnyUserField = async (req, res) => {
     }
   } catch (error) {
     return res.status(500).json({
+      statusCode:500,
       status: false,
       message: "unable to verify user",
       error: utils.getMessage("ACCOUNT_EXISTENCE_ERROR"),
@@ -256,7 +268,7 @@ const updateAnyUserField = async (req, res) => {
 
     // Check if the provided field name is valid
     if (!fieldToAttributeMap[field]) {
-      return res.status(400).json({ error: "Invalid field name" });
+      return res.status(400).json({statusCode:400, error: "Invalid field name" });
     }
 
     const attribute = fieldToAttributeMap[field];
@@ -296,6 +308,7 @@ const logOut = async (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
     if (auth.isTokenInvalid(token)) {
       return res.status(401).json({
+        statusCode:401,
         status: false,
         message: "Token is already invalidated",
         error: utils.getMessage("TOKEN_INVALID_ERROR"),
