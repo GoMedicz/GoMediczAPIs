@@ -32,6 +32,7 @@ const Appointments = sq.define('tbl_appointments', {
         key: 'doctor_code',
       },
     },
+
     userEmail: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -46,6 +47,5 @@ const Appointments = sq.define('tbl_appointments', {
   Appointments.sync().then(() => {
     console.log('appointments model synced');
   });
-  
+
   module.exports = Appointments;
-  

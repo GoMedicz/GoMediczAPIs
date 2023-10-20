@@ -7,6 +7,25 @@ const { Utils } = require("../../middlewares/utils");
 const utils = new Utils();
 const auth = new Auth();
 
+const generateHospitalCode = () => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  let firstCharacterIsNumber = true;
+
+  while (firstCharacterIsNumber) {
+    code = ""; // Reset the code
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      code += characters.charAt(randomIndex);
+    }
+    // Check if the first character is not a number
+    firstCharacterIsNumber = /^\d/.test(code);
+  }
+
+  return code;
+};
+
+
 // Create Hospital Profile
 const createHospitalProfile = async (req, res) => {
   try {
@@ -15,12 +34,14 @@ const createHospitalProfile = async (req, res) => {
     if (!name || !address || !facilities || !departments) {
       return res.status(400).json({ error: "Required fields missing" });
     }
+    const hospitalCode = generateHospitalCode();
 
     const hospital = await Hospitals.create({
       name: name,
       address: address,
       facilities: facilities,
       departments: departments,
+      hospital_code:hospitalCode
     });
 
     return res
@@ -28,6 +49,7 @@ const createHospitalProfile = async (req, res) => {
       .json({
         message: "Hospital profile created successfully",
         data: hospital,
+        hospital_code:hospital_code
       });
   } catch (error) {
     return res

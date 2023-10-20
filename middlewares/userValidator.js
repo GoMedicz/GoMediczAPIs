@@ -52,6 +52,7 @@ const validation = joi.object({
     email: joi.string().email().trim(true).required(),
     phoneNumber: joi.string().required(),
     password: joi.string().min(5).required(),
+    wallet: joi.string(),
 
   });
 
