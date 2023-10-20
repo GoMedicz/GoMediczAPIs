@@ -54,7 +54,8 @@ const Reg = async (req, res) => {
   try {
     const { phoneNumber } = req.body;
     if (!phoneNumber) {
-      return res.status(401).json({
+      return res.send({
+        statusCode:401,
         message: "Fields cannot be empty",
         error: utils.getMessage("DATA_ERROR"),
       });
@@ -63,7 +64,8 @@ const Reg = async (req, res) => {
       where: { phoneNumber: phoneNumber },
     });
     if (existingUser) {
-      return res.status(409).json({
+      return res.send({
+        statusCode:400,
         message: "User with this phone number already exists",
         error: utils.getMessage("ACCOUNT_EXISTS_ERROR"),
       });
@@ -77,10 +79,11 @@ const Reg = async (req, res) => {
     const responseMessage = `DO NOT DISCLOSE: Use ${otp} as your one-time password to continue your Gomedicz registration`;
 
     // Return the modified success response
-    return res.status(200).json({ message: responseMessage, statusCode:200 });
+    return res.send({ statusCode:200, message: responseMessage, statusCode:200 });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
+    return res.send({
+      statusCode:500,
       status: false,
       message: "Unable to register user",
       error: utils.getMessage("UNKNOWN_ERROR"),
@@ -100,7 +103,7 @@ const verifyOtp = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(409).json({
+      return res.send({
         statusCode:409,
         message: "User with this phone number already exists",
         error: "USER_ALREADY_EXISTS", // Provide a specific error code
@@ -124,7 +127,7 @@ const verifyOtp = async (req, res) => {
     // Generate token
     const token = auth.generateAuthToken(newUser);
 
-    return res.status(200).json({
+    return res.send({
       statusCode:200,
       status: true, // Set status to true for success
       message: "Registration successful",
@@ -133,10 +136,10 @@ const verifyOtp = async (req, res) => {
       user_code: user_code,
       wallet: newUser.wallet, // Double-check the wallet variable source
     });
-    
+
   } catch (error) {
     console.error("Error in user creation:", error);
-    return res.status(500).json({
+    return res.send({
       statusCode:500,
       status: false,
       message: "Registration failed",
@@ -150,7 +153,7 @@ const login = async (req, res) => {
   try {
     const { phoneNumber, password } = req.body;
     if (!phoneNumber || !password) {
-      return res.status(400).json({
+      return res.send({
         statusCode:400,
         status: false,
         message: "invalid credentials",
@@ -160,7 +163,7 @@ const login = async (req, res) => {
     //find user
     const user = await User.findOne({ where: { phoneNumber: phoneNumber } });
     if (!user) {
-      return res.status(400).json({
+      return res.send({
         statusCode:400,
         status: false,
         message: "user does not exist",
@@ -170,7 +173,7 @@ const login = async (req, res) => {
     //compare passwords
     const isMatchedPassword = await bcrypt.compare(password, user.password);
     if (!isMatchedPassword) {
-      return res.status(400).json({
+      return res.send({
         statusCode:400,
         status: false,
         message: "invalid password",
@@ -179,7 +182,7 @@ const login = async (req, res) => {
     }
     //if password matches, generate a new token and send in the response
     const token = auth.generateAuthToken({ email: user.email });
-    return res.status(200).json({
+    return res.send({
       statusCode:200,
       status: true,
       message: "login successful",
@@ -188,7 +191,7 @@ const login = async (req, res) => {
       wallet: wallet,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.send({
       statusCode:500,
       status: false,
       message: "login failed",
@@ -228,18 +231,20 @@ const verifyAnyUserField = async (req, res) => {
     });
 
     if (user) {
-      return res.json({
+      return res.send({
+        statusCode:200,
         exists: true,
         message: "Data exists in the database.",
       });
     } else {
-      return res.json({
+      return res.send({
+        statusCode:400,
         exists: false,
         message: "Data does not exist in the database.",
       });
     }
   } catch (error) {
-    return res.status(500).json({
+    return res.send({
       statusCode:500,
       status: false,
       message: "unable to verify user",
@@ -268,7 +273,7 @@ const updateAnyUserField = async (req, res) => {
 
     // Check if the provided field name is valid
     if (!fieldToAttributeMap[field]) {
-      return res.status(400).json({statusCode:400, error: "Invalid field name" });
+      return res.send({statusCode:400, error: "Invalid field name" });
     }
 
     const attribute = fieldToAttributeMap[field];
@@ -283,19 +288,22 @@ const updateAnyUserField = async (req, res) => {
     );
 
     if (numOfUpdatedRows > 0) {
-      return res.json({
+      return res.send({
+        statusCode:200,
         success: true,
         message: "Field updated successfully",
         updatedUsers,
       });
     } else {
-      return res.json({
+      return res.send({
+        statusCode:404,
         success: false,
         message: "User not found or no changes made",
       });
     }
   } catch (error) {
-    return res.status(500).json({
+    return res.send({
+      statusCode:500,
       status: false,
       message: "unable to verify user",
       error: utils.getMessage("ACCOUNT_EXISTENCE_ERROR"),
@@ -307,7 +315,7 @@ const logOut = async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
     if (auth.isTokenInvalid(token)) {
-      return res.status(401).json({
+      return res.send({
         statusCode:401,
         status: false,
         message: "Token is already invalidated",
@@ -318,12 +326,14 @@ const logOut = async (req, res) => {
     // Invalidate the token (log out the user)
     auth.invalidateToken(token);
 
-    return res.status(200).json({
+    return res.send({
+      statusCode:200,
       status: true,
       message: "Logged out successfully",
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.send({
+      statusCode:500,
       status: false,
       message: "Logout failed",
       error: utils.getMessage("LOGOUT_ERROR"),
