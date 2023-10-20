@@ -486,7 +486,7 @@ const verifyAnyDoctorField = async (req, res) => {
     });
 
     if (doctor) {
-      return res.status(200).json({ statusCode:200, exists: true, message: 'Data exists in the database.' });
+      return res.send({ statusCode:200, exists: true, message: 'Data exists in the database.' });
     } else {
       return res.send({
         statusCode: 404,
@@ -497,7 +497,7 @@ const verifyAnyDoctorField = async (req, res) => {
 
     }
   } catch (error) {
-    return res.status(500).json({
+    return res.send({
       statusCode:500,
       status: false,
       message: "Failed to verify field",
