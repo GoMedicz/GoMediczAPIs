@@ -52,13 +52,15 @@ const verifyDoctorWithPhone = async (req, res) => {
       });
     } else {
       return res.status(404).json({
+        statusCode:404,
         status:false,
-        message: "Doctor with this phone number does not exist",
+        message: "Request failed",
       });
     }
   } catch (error) {
     console.log(error);
     return res.status(500).json({
+      statusCode:500,
       status: false,
       message: "Unable to check doctor existence",
       error: "UNKNOWN_ERROR",
@@ -104,13 +106,14 @@ const doctorReg = async (req, res) => {
     // Create the user in the database
 
     // Generate token
-    // const token = auth.generateAuthToken(newDoctor);
+    const token = auth.generateAuthToken(newDoctor);
 
     return res.status(200).json({
       status:true,
       message: "Registration successful",
       data: newDoctor,
-      wallet:newDoctor.wallet
+      wallet:newDoctor.wallet,
+      token:token
     });
   } catch (error) {
     console.error("Error in verifying user:", error);
@@ -485,7 +488,13 @@ const verifyAnyDoctorField = async (req, res) => {
     if (doctor) {
       return res.status(200).json({ statusCode:200, exists: true, message: 'Data exists in the database.' });
     } else {
-      return res.status(404).json({ statusCode:404, exists: false, message: 'Data does not exist in the database.' });
+      return res.send({
+        statusCode: 404,
+        status: 'error',
+        exists: false,
+        message: 'Data does not exist in the database.',
+      });
+
     }
   } catch (error) {
     return res.status(500).json({
