@@ -147,77 +147,77 @@ Ratings.sync().then(() => {
   console.log("Ratings model synced");
 });
 
-const Order = sq.define('tbl_orders', {
-  code: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    primaryKey: true,
-    unique: true,
-  },
-  wallet: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-  },
-  user_code: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  vendor_code: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  rider_code: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  status: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  service_charge: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-  },
-  ground_total: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-  },
-  subtotal: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-  },
-  discount: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-  },
-  method: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  payer: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  total_item: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  reference: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  // Add the "items" field to store order items as JSON
-  items: {
-    type: DataTypes.JSON,
-    allowNull: false,
-  },
-});
+// const Order = sq.define('tbl_orders', {
+//   code: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//     primaryKey: true,
+//     unique: true,
+//   },
+//   wallet: {
+//     type: DataTypes.BIGINT,
+//     allowNull: false,
+//   },
+//   user_code: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//   },
+//   vendor_code: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//   },
+//   rider_code: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//   },
+//   status: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//   },
+//   service_charge: {
+//     type: DataTypes.DECIMAL(10, 2),
+//     allowNull: false,
+//   },
+//   ground_total: {
+//     type: DataTypes.DECIMAL(10, 2),
+//     allowNull: false,
+//   },
+//   subtotal: {
+//     type: DataTypes.DECIMAL(10, 2),
+//     allowNull: false,
+//   },
+//   discount: {
+//     type: DataTypes.DECIMAL(10, 2),
+//     allowNull: false,
+//   },
+//   method: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//   },
+//   payer: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//   },
+//   total_item: {
+//     type: DataTypes.INTEGER,
+//     allowNull: false,
+//   },
+//   reference: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//   },
+//   // Add the "items" field to store order items as JSON
+//   items: {
+//     type: DataTypes.JSON,
+//     allowNull: false,
+//   },
+// });
 
-Order.hasMany(OrderItem, { as: 'items' });
+// Order.hasMany(OrderItem, { as: 'items' });
 
-Order.sync().then(() => {
-  console.log('Order model synced');
-});
+// Order.sync().then(() => {
+//   console.log('Order model synced');
+// });
 
 
 
