@@ -1,7 +1,7 @@
-const {User} = require('../models/users');
+const { User } = require("../../models/users");
 const bcrypt = require("bcrypt");
-const { Auth } = require("../middlewares/auth");
-const { Utils } = require("../middlewares/utils");
+const { Auth } = require("../../middlewares/auth");
+const { Utils } = require("../../middlewares/utils");
 const _ = require("lodash");
 
 const utils = new Utils();
@@ -14,9 +14,9 @@ const twilioClient = twilio(accountSid, authToken);
 const sendOtp = async (phoneNumber, otp) => {
   try {
     // Check if the phoneNumber starts with '+234' or '234' (with or without the plus sign)
-    if (!phoneNumber.startsWith('+234') && !phoneNumber.startsWith('234')) {
+    if (!phoneNumber.startsWith("+234") && !phoneNumber.startsWith("234")) {
       // If not, prepend '+234' to the phoneNumber
-      phoneNumber = '+234' + phoneNumber;
+      phoneNumber = "+234" + phoneNumber;
     }
 
     const message = await twilioClient.messages.create({
@@ -32,6 +32,24 @@ const sendOtp = async (phoneNumber, otp) => {
   }
 };
 
+const generateUserCode = () => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  let firstCharacterIsNumber = true;
+
+  while (firstCharacterIsNumber) {
+    code = ""; // Reset the code
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      code += characters.charAt(randomIndex);
+    }
+    // Check if the first character is not a number
+    firstCharacterIsNumber = /^\d/.test(code);
+  }
+
+  return code;
+};
+
 const Reg = async (req, res) => {
   try {
     const { phoneNumber } = req.body;
@@ -41,7 +59,9 @@ const Reg = async (req, res) => {
         error: utils.getMessage("DATA_ERROR"),
       });
     }
-    const existingUser = await User.findOne({ where: { phoneNumber: phoneNumber } });
+    const existingUser = await User.findOne({
+      where: { phoneNumber: phoneNumber },
+    });
     if (existingUser) {
       return res.status(409).json({
         message: "User with this phone number already exists",
@@ -79,37 +99,46 @@ const verifyOtp = async (req, res) => {
     if (existingUser) {
       return res.status(409).json({
         message: "User with this phone number already exists",
-        error: utils.getMessage("USER_ALREADY_EXISTS"),
+        error: "USER_ALREADY_EXISTS", // Provide a specific error code
       });
     }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(data.password, 10);
+    const user_code = generateUserCode();
 
     // Create the user in the database
     const newUser = await User.create({
-      fullName:data.fullName,
+      user_code: user_code,
+      fullName: data.fullName,
       phoneNumber: data.phoneNumber,
       email: data.email,
       password: hashedPassword,
+      wallet: data.wallet,
     });
 
     // Generate token
     const token = auth.generateAuthToken(newUser);
 
     return res.status(200).json({
+      status: true, // Set status to true for success
       message: "Registration successful",
       data: newUser,
       token: token,
+      user_code: user_code,
+      wallet: newUser.wallet, // Double-check the wallet variable source
     });
+    
   } catch (error) {
+    console.error("Error in user creation:", error);
     return res.status(500).json({
       status: false,
-      message: "unable to verify user",
-      error: utils.getMessage("UNKNOWN_ERROR"),
+      message: "Registration failed",
+      error: "UNKNOWN_ERROR"
     });
   }
 };
+
 
 const login = async (req, res) => {
   try {
@@ -143,14 +172,120 @@ const login = async (req, res) => {
     const token = auth.generateAuthToken({ email: user.email });
     return res.status(200).json({
       status: true,
-      message: "login succesfull",
+      message: "login successful",
       token: token,
+      user_code: user_code,
+      wallet: wallet,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       status: false,
       message: "login failed",
+      error: utils.getMessage("ACCOUNT_EXISTENCE_ERROR"),
+    });
+  }
+};
+
+const verifyAnyUserField = async (req, res) => {
+  try {
+    const { fieldName, data } = req.body; // Assuming you're sending a POST request with a JSON body
+
+    // Define a mapping of field names to corresponding model attributes
+    const fieldToAttributeMap = {
+      fullName: "fullName",
+      email: "email",
+      phoneNumber: "phoneNumber",
+      user_code: "user_code",
+      gender: "gender",
+      wallet: "wallet",
+      homeAddress: "homeAddress",
+      workAddress: "workAddress",
+      otherAddress: "otherAddress",
+      // Add more field mappings as needed
+    };
+
+    // Check if the provided field name is valid
+    if (!fieldToAttributeMap[fieldName]) {
+      return res.status(400).json({ error: "Invalid field name" });
+    }
+
+    const attribute = fieldToAttributeMap[fieldName];
+
+    // Check if the data exists in the database
+    const user = await User.findOne({
+      where: { [attribute]: data },
+    });
+
+    if (user) {
+      return res.json({
+        exists: true,
+        message: "Data exists in the database.",
+      });
+    } else {
+      return res.json({
+        exists: false,
+        message: "Data does not exist in the database.",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "unable to verify user",
+      error: utils.getMessage("ACCOUNT_EXISTENCE_ERROR"),
+    });
+  }
+};
+
+const updateAnyUserField = async (req, res) => {
+  try {
+    const { field, userCode, data } = req.body; // Assuming you're sending a POST request with a JSON body
+
+    // Define a mapping of field names to corresponding model attributes
+    const fieldToAttributeMap = {
+      fullName: "fullName",
+      email: "email",
+      phoneNumber: "phoneNumber",
+      user_code: "user_code",
+      gender: "gender",
+      wallet: "wallet",
+      homeAddress: "homeAddress",
+      workAddress: "workAddress",
+      otherAddress: "otherAddress",
+      // Add more field mappings as needed
+    };
+
+    // Check if the provided field name is valid
+    if (!fieldToAttributeMap[field]) {
+      return res.status(400).json({ error: "Invalid field name" });
+    }
+
+    const attribute = fieldToAttributeMap[field];
+
+    // Update the field in the database for the specified userCode
+    const [numOfUpdatedRows, updatedUsers] = await User.update(
+      { [attribute]: data },
+      {
+        where: { user_code: userCode },
+        returning: true, // Return the updated rows
+      }
+    );
+
+    if (numOfUpdatedRows > 0) {
+      return res.json({
+        success: true,
+        message: "Field updated successfully",
+        updatedUsers,
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: "User not found or no changes made",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "unable to verify user",
       error: utils.getMessage("ACCOUNT_EXISTENCE_ERROR"),
     });
   }
@@ -188,4 +323,6 @@ module.exports = {
   verifyOtp,
   login,
   logOut,
+  verifyAnyUserField,
+  updateAnyUserField,
 };

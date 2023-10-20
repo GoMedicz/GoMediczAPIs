@@ -5,6 +5,25 @@ const Labs = require("../../models/labs");
 const utils = new Utils();
 const auth = new Auth();
 
+const generateLabCode = () => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  let firstCharacterIsNumber = true;
+
+  while (firstCharacterIsNumber) {
+    code = ""; // Reset the code
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      code += characters.charAt(randomIndex);
+    }
+    // Check if the first character is not a number
+    firstCharacterIsNumber = /^\d/.test(code);
+  }
+
+  return code;
+};
+
+
 // Create Hospital Profile
 const createLabs = async (req, res) => {
   try {
@@ -14,16 +33,23 @@ const createLabs = async (req, res) => {
       return res.status(400).json({ error: "Required fields missing" });
     }
 
+    const labCode = generateLabCode();
+
     const labs = await Labs.create({
       name: name,
       address: address,
       facilities: facilities,
       departments: departments,
+      lab_code: labCode,
     });
 
     return res
       .status(201)
-      .json({ message: "lab profile created successfully", data: labs });
+      .json({
+        message: "lab profile created successfully",
+        data: labs,
+        lab_code: lab_code,
+      });
   } catch (error) {
     return res
       .status(500)

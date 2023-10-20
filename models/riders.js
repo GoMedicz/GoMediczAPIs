@@ -3,37 +3,37 @@ const Sequelize = require('sequelize')
 const {DataTypes} = require('sequelize')
 
 
-const Hospitals = sq.define('tbl_hospitals',{
-    name: {
+const Riders = sq.define('tbl_riders',{
+    fullName: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    address: {
+    email: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    hospital_code: {
+    phoneNumber: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    rider_code: {
         type: DataTypes.STRING,
         allowNull: false,
         primaryKey: true, // Add primaryKey constraint
         unique: true,
     },
-    facilities: {
-        type: DataTypes.JSON, // Store facilities as JSON data
+    wallet: {
+        type: DataTypes.STRING,
+        unique: true
     },
-    departments: {
-        type: DataTypes.JSON, // Store departments as JSON data
-    },
-    about: {
-        type: DataTypes.TEXT,
-    },
+
 
 })
 
-Hospitals.sync().then(()=>{
-    console.log('hospital model synced')
+Riders.sync().then(()=>{
+    console.log('riders model synced')
 })
 
 
 
-module.exports = Hospitals
+module.exports = Riders

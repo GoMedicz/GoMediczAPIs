@@ -18,6 +18,12 @@ const Labs = sq.define('tbl_labs',{
     departments: {
         type: DataTypes.JSON, // Store departments as JSON data
     },
+    lab_code: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        primaryKey: true, // Add primaryKey constraint
+        unique: true,     // Add unique constraint
+      },
     about: {
         type: DataTypes.TEXT,
     },

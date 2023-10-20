@@ -41,6 +41,10 @@ const Doctors = sq.define('tbl_doctors',{
     gender: {
       type: DataTypes.STRING,
   },
+  wallet: {
+    type: DataTypes.STRING,
+    unique: true
+},
     serviceAt: {
         type: DataTypes.JSON, // List of hospitals the doctor services at
     },
@@ -74,6 +78,12 @@ const Doctors = sq.define('tbl_doctors',{
     reviewComments: {
         type: DataTypes.TEXT,
       },
+      longitude: {
+        type: DataTypes.DOUBLE, // Field for storing longitude
+      },
+      latitude: {
+        type: DataTypes.DOUBLE, // Field for storing latitude
+      },
 }, {
     indexes: [
       // Index for the 'email' field for quick lookup by email
@@ -101,6 +111,10 @@ const Doctors = sq.define('tbl_doctors',{
       // Composite index for multiple fields (example: 'status' and 'isPharmacyOwner')
       {
         fields: ['status', 'isPharmacyOwner']
+      },
+      {
+        unique: true,
+        fields: ['wallet']
       }
     ]
   });
