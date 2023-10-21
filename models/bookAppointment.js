@@ -17,6 +17,12 @@ const Appointments = sq.define('tbl_appointments', {
       type: DataTypes.DATE,
       allowNull: false,
     },
+    appointment_code:{
+      type: DataTypes.STRING,
+        allowNull: false,
+        primaryKey: true, // Add primaryKey constraint
+        unique: true,
+    },
     appointmentReason: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -32,6 +38,14 @@ const Appointments = sq.define('tbl_appointments', {
         key: 'doctor_code',
       },
     },
+    user_code:{
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: 'tbl_users',
+        key: 'user_code',
+      },
+    },
 
     userEmail: {
       type: DataTypes.STRING,
@@ -44,7 +58,7 @@ const Appointments = sq.define('tbl_appointments', {
   });
 
 
-  Appointments.sync().then(() => {
+  Appointments.sync({force:true}).then(() => {
     console.log('appointments model synced');
   });
 

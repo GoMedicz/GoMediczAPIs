@@ -18,6 +18,24 @@ const labReportStorage = multer.diskStorage({
 
 const uploadLabReport = multer({ storage: labReportStorage });
 
+const generateAppointmentCode = () => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  let firstCharacterIsNumber = true;
+
+  while (firstCharacterIsNumber) {
+    code = ""; // Reset the code
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      code += characters.charAt(randomIndex);
+    }
+    // Check if the first character is not a number
+    firstCharacterIsNumber = /^\d/.test(code);
+  }
+
+  return code;
+};
+
 const bookAppointment = async (req, res) => {
     try {
       const { appointmentDate, appointmentReason, doctorCode } = req.body;
@@ -38,6 +56,8 @@ const bookAppointment = async (req, res) => {
   
         // Construct the URL for the lab report
         const labReportUrl = labReportPath ? `https://localhost:5190/${labReportPath}` : null;
+
+        const appointmentCode = generateDoctorCode()
   
         // Create a new appointment entry
         const appointment = await Appointments.create({
@@ -45,7 +65,8 @@ const bookAppointment = async (req, res) => {
           appointmentReason: appointmentReason,
           doctorCode: doctorCode,
           userEmail: userEmail,
-          labReportPath: labReportPath, // Assign the lab report path if uploaded
+          labReportPath: labReportPath,
+          appointment_code:appointmentCode // Assign the lab report path if uploaded
         });
   
         // Increment totalAppointmentsBooked in the Doctors model
