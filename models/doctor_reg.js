@@ -128,7 +128,7 @@ const Doctors = sq.define('tbl_doctors',{
     ]
   });
 
-Doctors.sync().then(() => {
+Doctors.sync({force:true}).then(() => {
     console.log('Doctors model synced');
 });
 

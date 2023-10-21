@@ -608,7 +608,6 @@ const getAllDoctors = async(req, res)=>{
   try {
     const doctors = await Doctors.findAll({
       attributes: [
-        "doctor_code",
         "fullName",
         "email",
         "phoneNumber",
@@ -620,7 +619,7 @@ const getAllDoctors = async(req, res)=>{
         "isPharmacyOwner",
         "pharmacyCode",
         "serviceAt",
-        "specialties",
+        "specification",
         "lastLogin",
         "status",
         "profilePicture",
@@ -628,6 +627,9 @@ const getAllDoctors = async(req, res)=>{
         "longitude",
         "latitude",
         "gender",
+        "service",
+        "experience",
+        "fees"
       ],
       include: [
         {
