@@ -1,53 +1,21 @@
-// const { Sequelize } = require("sequelize");
-
-// // db conn prod test
-
-// const sequelize = new Sequelize({
-
-//   dialect: "postgres",
-//   host: "xv1gg.czmqeftbyotf.eu-west-1.rds.amazonaws.com",
-//   port: 5432, // The PostgreSQL default port
-//   username: "postgres",
-//   password: "password",
-//   database: "Gomedx2",
-//   ssl: true,               // Enable SSL
-//   dialectOptions: {
-//     ssl: { rejectUnauthorized: false } // Ignore certificate validation
-//   },
-
-
-//   pool: {
-//     max: 5,
-//     min: 0,
-//     acquire: 30000,
-//     idle: 10000,
-//   },
-// });
-
-// const testDbConnection = async () => {
-//   try {
-//     await sequelize.authenticate();
-//     console.log("Connection has been established successfully.");
-//   } catch (error) {
-//     console.error("Unable to connect to the database:", error);
-//   }
-// };
-
-// module.exports = { sq: sequelize, testDbConnection };
-
-
-
-
-
-//db conn localtest
-
-
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize("gomedicz", "postgres", "password", {
-  host: "localhost",
+// db conn prod test
+
+const sequelize = new Sequelize({
+
   dialect: "postgres",
- 
+  host: "xv1gg.czmqeftbyotf.eu-west-1.rds.amazonaws.com",
+  port: 5432, // The PostgreSQL default port
+  username: "postgres",
+  password: "password",
+  database: "Gomedx2",
+  ssl: true,               // Enable SSL
+  dialectOptions: {
+    ssl: { rejectUnauthorized: false } // Ignore certificate validation
+  },
+
+
   pool: {
     max: 5,
     min: 0,
@@ -66,3 +34,35 @@ const testDbConnection = async () => {
 };
 
 module.exports = { sq: sequelize, testDbConnection };
+
+
+
+
+
+//db conn localtest
+
+
+// const { Sequelize } = require("sequelize");
+
+// const sequelize = new Sequelize("gomedicz", "postgres", "password", {
+//   host: "localhost",
+//   dialect: "postgres",
+ 
+//   pool: {
+//     max: 5,
+//     min: 0,
+//     acquire: 30000,
+//     idle: 10000,
+//   },
+// });
+
+// const testDbConnection = async () => {
+//   try {
+//     await sequelize.authenticate();
+//     console.log("Connection has been established successfully.");
+//   } catch (error) {
+//     console.error("Unable to connect to the database:", error);
+//   }
+// };
+
+// module.exports = { sq: sequelize, testDbConnection };
