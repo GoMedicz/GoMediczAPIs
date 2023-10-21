@@ -190,7 +190,7 @@ const login = async (req, res) => {
       message: "login successful",
       token: token,
       user_code: user_code,
-      wallet: wallet,
+      wallet: user.wallet,
     });
   } catch (error) {
     return res.send({

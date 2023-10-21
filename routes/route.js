@@ -37,6 +37,11 @@ authRouter.post(
   userOtpValidation,
   userAuth.verifyOtp
 );
+authRouter.delete(
+  "/api/doctor/delete-by-phone/:phoneNumber",
+  auth.tokenRequired,
+  docAuth.deleteDoctorByPhoneNumber
+);
 //verify doctor exists with phone
 authRouter.post("/api/verify/doc/phoneNumber", docAuth.verifyDoctorWithPhone);
 //reg doctors

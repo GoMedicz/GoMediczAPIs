@@ -170,7 +170,7 @@ const docLogin = async (req, res) => {
       message: "login succesfull",
       token: token,
       doctor_code:doctors.doctor_code,
-      wallet:wallet
+      wallet:doctors.wallet
     });
   } catch (error) {
     console.log(error);
@@ -598,9 +598,49 @@ const docLogOut = async (req, res) => {
   }
 };
 
+const deleteDoctorByPhoneNumber = async (req, res) => {
+  try {
+    const phoneNumber = req.params.phoneNumber;
+
+    // Check if the doctor exists with the provided phoneNumber
+    const existingDoctor = await Doctors.findOne({
+      where: { phoneNumber: phoneNumber },
+    });
+
+    if (!existingDoctor) {
+      return res.status(404).json({
+        status: false,
+        message: 'Doctor not found',
+      });
+    }
+
+    // Perform the deletion of the doctor
+    await existingDoctor.destroy();
+
+    return res.status(200).json({
+      status: true,
+      message: 'Doctor deleted successfully',
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: false,
+      message: 'Failed to delete doctor',
+      error: error.message,
+    });
+  }
+};
+
+
+
+
+
+
+
 module.exports = {
   doctorReg,
   docLogin,
+  deleteDoctorByPhoneNumber,
   docLogOut,
   updateDoctorProfile,
   searchDoctors,
