@@ -9,9 +9,7 @@ const moment = require("moment");
 const upload = require("../multerConfig");
 // const Sequelize = require('sequelize')
 const { Op } = require("sequelize");
-const { Sequelize, fn, col, } = require('sequelize');
-
-// const {sequelize} = require('../../config/database')
+const { sq: sequelize } = require('../../config/database');
 
 
 
@@ -612,7 +610,7 @@ const docLogOut = async (req, res) => {
   }
 };
 
-const getAllDoctors = async(req, res)=>{
+const getAllDoctors = async (req, res) => {
   try {
     const doctors = await Doctors.findAll({
       attributes: [
@@ -621,8 +619,6 @@ const getAllDoctors = async(req, res)=>{
         "phoneNumber",
         "hospital",
         "about",
-        "totalRating",
-        "totalAppointmentsBooked",
         "reviewComments",
         "isPharmacyOwner",
         "pharmacyCode",
@@ -638,17 +634,7 @@ const getAllDoctors = async(req, res)=>{
         "services",
         "experience",
         "fees"
-      ],
-      include: [
-        {
-          model: Ratings,
-          attributes: [
-            [sequelize.fn("AVG", sequelize.col("rating")), "averageRating"],
-          ],
-          where: { doctorCode: sequelize.col("Doctors.doctor_code") },
-        },
-      ],
-      group: ["Doctors.doctor_code"],
+      ]
     });
 
     if (!doctors || doctors.length === 0) {
@@ -677,7 +663,7 @@ const getAllDoctors = async(req, res)=>{
     };
     return res.send(response);
   }
-}
+};
 
 const deleteDoctorByPhoneNumber = async (req, res) => {
   try {

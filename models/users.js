@@ -1,6 +1,5 @@
 // const db = require("../config/database")
 const { sq } = require("../config/database");
-const Sequelize = require("sequelize");
 const { DataTypes } = require("sequelize");
 const Doctors = require("./doctor_reg");
 
@@ -142,6 +141,7 @@ const Ratings = sq.define(
     ],
   }
 );
+// Ratings.belongsTo(Doctors, { foreignKey: 'doctorCode' });
 
 Ratings.sync().then(() => {
   console.log("Ratings model synced");

@@ -1,6 +1,6 @@
 const { sq } = require('../config/database')
-const Sequelize = require('sequelize')
 const {DataTypes} = require('sequelize')
+const {User, Ratings} = require("./users")
 
 
 const Doctors = sq.define('tbl_doctors',{
@@ -127,6 +127,8 @@ const Doctors = sq.define('tbl_doctors',{
       }
     ]
   });
+
+// Doctors.hasMany(Ratings, { foreignKey: 'doctorCode' });
 
 Doctors.sync().then(() => {
     console.log('Doctors model synced');
