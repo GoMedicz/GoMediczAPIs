@@ -11,6 +11,7 @@ const appointment = require("../controller/doctors/appointment");
 const {
   loginValidate,
   userOtpValidation,
+  userRegV,
 } = require("../middlewares/userValidator");
 
 const auth = new Auth();
@@ -34,7 +35,7 @@ authRouter.post("/api/log/out", userAuth.logOut);
 //verify user otp
 authRouter.post(
   "/api/reg/user/verification",
-  userOtpValidation,
+  userRegV,
   userAuth.verifyOtp
 );
 authRouter.delete(

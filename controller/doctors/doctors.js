@@ -9,6 +9,11 @@ const moment = require("moment");
 const upload = require("../multerConfig");
 // const Sequelize = require('sequelize')
 const { Op } = require("sequelize");
+const { Sequelize, fn, col, } = require('sequelize');
+
+// const {sequelize} = require('../../config/database')
+
+
 
 const utils = new Utils();
 const auth = new Auth();
@@ -102,7 +107,10 @@ const doctorReg = async (req, res) => {
       email: data.email,
       fullName: data.fullName,
       password: hashedPassword,
-      wallet:data.wallet
+      wallet:data.wallet,
+      serviceAt:data.serviceAt,
+      specification:data.specification,
+      services:data.services
     });
 
     // Create the user in the database
