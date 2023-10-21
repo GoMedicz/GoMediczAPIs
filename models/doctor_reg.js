@@ -41,6 +41,9 @@ const Doctors = sq.define('tbl_doctors',{
     gender: {
       type: DataTypes.STRING,
   },
+  services: {
+    type: DataTypes.JSON,
+},
   wallet: {
     type: DataTypes.STRING,
     unique: true
@@ -48,9 +51,15 @@ const Doctors = sq.define('tbl_doctors',{
     serviceAt: {
         type: DataTypes.JSON, // List of hospitals the doctor services at
     },
-    specialties: {
+    specification: {
         type: DataTypes.JSON,
     },
+    experience: {
+      type: DataTypes.STRING,
+  },
+  fees: {
+    type: DataTypes.STRING,
+},
     lastLogin: {
         type: DataTypes.DATE,
     },

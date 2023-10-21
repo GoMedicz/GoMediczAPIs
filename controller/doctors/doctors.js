@@ -188,16 +188,18 @@ const updateDoctorProfile = async (req, res) => {
     // Use Multer middleware to handle file uploads
     upload.single("profilePicture")(req, res, async (err) => {
       if (err) {
-        return res.status(400).json({
+        return res.send({
+          statusCode:400,
           status: false,
           message: "Profile picture upload failed",
           error: err.message,
         });
       }
 
-      const data = req.body;
+      const userEmail = req.user.email; // Get the email from the user token
+
       const existingDoctor = await Doctors.findOne({
-        where: { email: data.email },
+        where: { email: userEmail }, // Find the doctor by email
       });
 
       if (!existingDoctor) {
@@ -212,27 +214,21 @@ const updateDoctorProfile = async (req, res) => {
       const formattedLastLogin = moment().format("YYYY-MM-DD HH:mm:ss.SSS");
 
       // Update the doctor's profile (excluding availableTimes) with the formatted "lastLogin"
-      const updatedDoctor = await existingDoctor.update(
-        {
-          ...data,
-          lastLogin: formattedLastLogin,
-          // Store the profile picture filename in the database
-          profilePicture: req.file.filename, // req.file contains the uploaded file information
-        },
-        {
-          where: { email: existingDoctor.email },
-          returning: true,
-        }
-      );
+      const updatedDoctor = await existingDoctor.update({
+        ...req.body, // Use the data from the request body
+        lastLogin: formattedLastLogin,
+        // Store the profile picture filename in the database
+        profilePicture: req.file.filename, // req.file contains the uploaded file information
+      });
 
       // Update or create AvailableTimes for the doctor
       await AvailableTimes.upsert({
         doctor_code: existingDoctor.doctor_code,
-        available_days: data.available_days,
-        available_start_time: data.available_start_time,
-        available_end_time: data.available_end_time,
-        minutesPerSection: data.minutesPerSection,
-        available_months: data.available_months,
+        available_days: req.body.available_days,
+        available_start_time: req.body.available_start_time,
+        available_end_time: req.body.available_end_time,
+        minutesPerSection: req.body.minutesPerSection,
+        available_months: req.body.available_months,
       });
 
       // Fetch the updated AvailableTimes for the doctor
@@ -247,7 +243,7 @@ const updateDoctorProfile = async (req, res) => {
       };
 
       return res.send({
-        statusCode:400,
+        statusCode:200,
         status: true,
         message: "Doctor profile updated successfully",
         data: responseData,
@@ -256,13 +252,14 @@ const updateDoctorProfile = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.send({
-      statusCode:400,
+      statusCode:500,
       status: false,
       message: "Unable to update doctor profile",
       error: error.message,
     });
   }
 };
+
 
 const submitRating = async (req, res) => {
   try {
@@ -349,14 +346,18 @@ const DoctorProfile = async (req, res) => {
         "isPharmacyOwner",
         "pharmacyCode",
         "serviceAt",
-        "specialties",
+        "specification",
         "lastLogin",
         "status",
         "profilePicture",
         "wallet",
         "longitude",
         "latitude",
-        "gender"
+        "gender",
+        "service",
+        "experience",
+        "fees"
+
       ],
     });
 
@@ -603,6 +604,71 @@ const docLogOut = async (req, res) => {
   }
 };
 
+const getAllDoctors = async(req, res)=>{
+  try {
+    const doctors = await Doctors.findAll({
+      attributes: [
+        "doctor_code",
+        "fullName",
+        "email",
+        "phoneNumber",
+        "hospital",
+        "about",
+        "totalRating",
+        "totalAppointmentsBooked",
+        "reviewComments",
+        "isPharmacyOwner",
+        "pharmacyCode",
+        "serviceAt",
+        "specialties",
+        "lastLogin",
+        "status",
+        "profilePicture",
+        "wallet",
+        "longitude",
+        "latitude",
+        "gender",
+      ],
+      include: [
+        {
+          model: Ratings,
+          attributes: [
+            [sequelize.fn("AVG", sequelize.col("rating")), "averageRating"],
+          ],
+          where: { doctorCode: sequelize.col("Doctors.doctor_code") },
+        },
+      ],
+      group: ["Doctors.doctor_code"],
+    });
+
+    if (!doctors || doctors.length === 0) {
+      const response = {
+        status: false,
+        message: "No doctors found in the database",
+        statusCode: 404,
+      };
+      return res.send(response);
+    }
+
+    const response = {
+      status: true,
+      message: "Doctors' profiles retrieved successfully",
+      statusCode: 200,
+      data: doctors,
+    };
+    return res.send(response);
+  } catch (error) {
+    console.error(error);
+    const response = {
+      status: false,
+      message: "Failed to retrieve doctors' profiles",
+      error: error.message,
+      statusCode: 500,
+    };
+    return res.send(response);
+  }
+}
+
 const deleteDoctorByPhoneNumber = async (req, res) => {
   try {
     const phoneNumber = req.params.phoneNumber;
@@ -654,5 +720,6 @@ module.exports = {
   getDoctorByPhoneNumber,
   verifyDoctorWithPhone,
   verifyAnyDoctorField,
-  updateAnyDoctorField
+  updateAnyDoctorField,
+  getAllDoctors
 };

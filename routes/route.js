@@ -70,6 +70,12 @@ authRouter.post(
   auth.tokenRequired,
   docAuth.updateDoctorProfile
 );
+//get all doctors profile
+authRouter.get(
+  "/api/get/all/doctor/profile",
+  auth.tokenRequired,
+  docAuth.getAllDoctors
+);
 //rate doctors
 authRouter.post("/api/submit/rating", auth.tokenRequired, docAuth.submitRating);
 //verify any doctor field
