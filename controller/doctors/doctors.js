@@ -627,7 +627,7 @@ const getAllDoctors = async(req, res)=>{
         "longitude",
         "latitude",
         "gender",
-        "service",
+        "services",
         "experience",
         "fees"
       ],
