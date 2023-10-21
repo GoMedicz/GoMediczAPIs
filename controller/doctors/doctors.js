@@ -352,6 +352,11 @@ const DoctorProfile = async (req, res) => {
         "specialties",
         "lastLogin",
         "status",
+        "profilePicture",
+        "wallet",
+        "longitude",
+        "latitude",
+        "gender"
       ],
     });
 
