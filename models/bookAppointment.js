@@ -27,10 +27,22 @@ const Appointments = sq.define('tbl_appointments', {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    appointmentStatus: {
+      type: DataTypes.STRING,
+    },
+    remark: {
+      type: DataTypes.STRING,
+    },
+    appointmentTime: {
+      type: DataTypes.STRING,
+    },
+    attachment: {
+      type: DataTypes.STRING,
+    },
     labReportPath: {
       type: DataTypes.STRING, // Path to lab report PDF files
     },
-    doctorCode: {
+    doctor_code: {
       type: DataTypes.STRING,
       allowNull: false,
       references: {
@@ -62,7 +74,7 @@ const Appointments = sq.define('tbl_appointments', {
           fields: ['appointment_code'], // Create a unique index on appointment_code
       },
       {
-          fields: ['doctorCode'],
+          fields: ['doctor_code'],
       },
       {
           fields: ['user_code'],
@@ -74,7 +86,7 @@ const Appointments = sq.define('tbl_appointments', {
   });
 
 
-  Appointments.sync().then(() => {
+  Appointments.sync({force:true}).then(() => {
     console.log('appointments model synced');
   });
 

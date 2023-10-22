@@ -40,7 +40,7 @@ const generateAppointmentCode = () => {
 
 const bookAppointment = async (req, res) => {
     try {
-      const { appointmentDate, appointmentReason, doctorCode } = req.body;
+      const { appointmentDate, appointmentReason, doctor_code } = req.body;
       const userEmail = req.user.email; // Assuming user is authenticated
      
     
@@ -77,7 +77,7 @@ const bookAppointment = async (req, res) => {
         const appointment = await Appointments.create({
           appointmentDate: appointmentDate,
           appointmentReason: appointmentReason,
-          doctorCode: doctorCode,
+          doctor_code: doctor_code,
           userEmail: userEmail,
           labReportPath: labReportPath,
           appointment_code:appointmentCode,
@@ -89,7 +89,7 @@ const bookAppointment = async (req, res) => {
         // Increment totalAppointmentsBooked in the Doctors model
         await Doctors.increment('totalAppointmentsBooked', {
           by: 1,
-          where: { doctor_code: doctorCode },
+          where: { doctor_code: doctor_code },
         });
   
         // Include the lab report URL in the response data
