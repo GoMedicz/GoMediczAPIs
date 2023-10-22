@@ -152,6 +152,11 @@ authRouter.post(
   auth.tokenRequired,
   appointment.bookAppointment
 );
+authRouter.get(
+  "/api/appointment/reviews/:doctorCode",
+  auth.tokenRequired,
+  appointment.getAppointmentReviewsByDoctorCode
+);
 authRouter.post(
   "/api/submit/appointment/reviews",
   auth.tokenRequired,
