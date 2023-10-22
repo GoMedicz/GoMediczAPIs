@@ -1,8 +1,10 @@
 
 const Doctors = require('../../models/doctor_reg');
-const Appointments = require("../../models/bookAppointment");
+
 const multer = require('multer');
 const path = require('path');
+const {User} = require('../../models/users')
+const {AppointmentReviews,Appointments}=require("../../models/bookAppointment")
 
 // Define the storage for lab reports using multer
 const labReportStorage = multer.diskStorage({
@@ -40,6 +42,8 @@ const bookAppointment = async (req, res) => {
     try {
       const { appointmentDate, appointmentReason, doctorCode } = req.body;
       const userEmail = req.user.email; // Assuming user is authenticated
+     
+    
   
       // Upload the lab report (if provided)
       uploadLabReport.single('labReport')(req, res, async (err) => {
@@ -57,7 +61,15 @@ const bookAppointment = async (req, res) => {
         // Construct the URL for the lab report
         const labReportUrl = labReportPath ? `https://localhost:5190/${labReportPath}` : null;
 
-        const appointmentCode = generateDoctorCode()
+        const appointmentCode = generateAppointmentCode()
+        const user = await User.findOne({ where: { email: userEmail } });
+      if (!user) {
+        return res.status(400).json({
+          status: false,
+          message: 'User not found',
+        });
+      }
+      const userCode = user.user_code;
   
         // Create a new appointment entry
         const appointment = await Appointments.create({
@@ -66,7 +78,10 @@ const bookAppointment = async (req, res) => {
           doctorCode: doctorCode,
           userEmail: userEmail,
           labReportPath: labReportPath,
-          appointment_code:appointmentCode // Assign the lab report path if uploaded
+          appointment_code:appointmentCode,
+          user_code: userCode
+           // Assign the lab report path if uploaded
+
         });
   
         // Increment totalAppointmentsBooked in the Doctors model
@@ -94,10 +109,88 @@ const bookAppointment = async (req, res) => {
       });
     }
   };
+
+
+  const submitAppointmentReview = async (req, res) => {
+    try {
+        const data = req.body;
+        const userEmail = req.user.email; // Assuming user is authenticated
+        console.log('User email:', userEmail);
+
+        // Validate the request data
+        if (!data.appointment_code || !data.doctor_code || !data.rating || !data.reviewComments) {
+            return res.status(400).json({
+                statusCode: 400,
+                status: false,
+                message: "Invalid data. Please provide appointment_code, doctor_code, rating, and reviewComments.",
+            });
+        }
+        console.log('Appointment code from request:', data.appointment_code);
+
+        // Retrieve user code from the authenticated user
+        const user = await User.findOne({ where: { email: userEmail } });
+        if (!user) {
+            return res.status(400).json({
+                statusCode: 400,
+                status: false,
+                message: 'User not found',
+            });
+        }
+
+        const userCode = user.user_code;
+
+        // Check if the appointment exists and is associated with the user
+        const existingAppointment = await Appointments.findOne({
+            where: {
+                appointment_code: data.appointment_code,
+                user_code: userCode,
+            },
+        });
+        console.log('Query result (existingAppointment):', existingAppointment);
+
+        if (!existingAppointment) {
+            return res.status(404).json({
+                statusCode: 404,
+                status: false,
+                message: "Appointment not found or not associated with the user.",
+            });
+        }
+
+        // Create a new appointment review entry
+        await AppointmentReviews.create({
+            appointment_code: data.appointment_code,
+            user_code: userCode,
+            doctor_code: data.doctor_code,
+            rating: data.rating,
+            reviewComments: data.reviewComments,
+            date_reviewed: new Date(),
+        });
+
+        // Update the totalRating field in the Doctors model (you may need to calculate the average rating)
+
+        // Return a success response
+        return res.status(200).json({
+            statusCode: 200,
+            status: true,
+            message: "Rating and review submitted successfully.",
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            statusCode: 500,
+            status: false,
+            message: "Failed to submit rating and review.",
+            error: error.message,
+        });
+    }
+};
+
+
   
 
 
 
   module.exports = {
-    bookAppointment
+    bookAppointment,
+    submitAppointmentReview
   }

@@ -129,13 +129,33 @@ authRouter.post(
   auth.tokenRequired,
   support.submitMessage
 );
+authRouter.post(
+  "/api/support/faqs/content",
+  auth.tokenRequired,
+  support.faqsAndContent
+);
+authRouter.get(
+  "/api/support/messages/all",
+  auth.tokenRequired,
+  support.getAllMessages
+);
+authRouter.get(
+  "/api/support/faqs/content/all",
+  auth.tokenRequired,
+  support.getAllFaqsAndContent
+);
 //post faqs and contents
 authRouter.post("/api/faqs", auth.tokenRequired, support.faqsAndContent);
 //book appointment
 authRouter.post(
-  "/api/book_appointment",
+  "/api/book/appointment",
   auth.tokenRequired,
   appointment.bookAppointment
+);
+authRouter.post(
+  "/api/submit/appointment/reviews",
+  auth.tokenRequired,
+  appointment.submitAppointmentReview
 );
 
 module.exports = {

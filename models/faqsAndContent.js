@@ -16,12 +16,21 @@ const Faqs = sq.define('tbl_faqs',{
         type:DataTypes.STRING,
         allowNull: false,
     },
-    status: {
-        type: DataTypes.BOOLEAN, // Store facilities as JSON data
-    },
 
+},{
+    indexes: [
+        {
+            fields: ['title'], // Add an index on the 'title' field
+        },
+        {
+            fields: ['owner'], // Add an index on the 'owner' field
+        },
+        // Add other indexes as needed
+    ],
 })
 
-Faqs.sync().then(()=>{
+Faqs.sync({force:true}).then(()=>{
     console.log('faqs model synced')
 })
+
+module.exports = Faqs
