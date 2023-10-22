@@ -74,7 +74,7 @@ const Appointments = sq.define('tbl_appointments', {
   });
 
 
-  Appointments.sync({force:true}).then(() => {
+  Appointments.sync().then(() => {
     console.log('appointments model synced');
   });
 
@@ -146,7 +146,7 @@ const Appointments = sq.define('tbl_appointments', {
 ],
 });
 
-AppointmentReviews.sync({force:true}).then(() => {
+AppointmentReviews.sync().then(() => {
     console.log('appointments model synced');
 });
 
