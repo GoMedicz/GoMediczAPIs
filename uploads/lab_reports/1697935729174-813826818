@@ -1,0 +1,530 @@
+{
+	"info": {
+		"_postman_id": "53609fa2-3599-4330-9fd8-bb22d3e844b8",
+		"name": "v1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19571864",
+		"_collection_link": "https://abbrefy.postman.co/workspace/GOMEDICS~98d3044d-086e-4d34-a97e-c0f3acbf7ccf/collection/19571864-53609fa2-3599-4330-9fd8-bb22d3e844b8?action=share&source=collection_link&creator=19571864"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "send otp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phoneNumber\":\"09043040805\",\r\n    \"otp\":\"657465\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{live}}/reg/user/otp",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"reg",
+								"user",
+								"otp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verification and save to db",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phoneNumber\":\"090963304080\",\r\n    \"email\":\"berjon@gmail.com\",\r\n    \"fullName\":\"cejbt brln\",\r\n    \"password\":\"v484ijxcck\",\r\n    \"wallet\":\"23888kj\"\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Gomedics-local}}/reg/user/verification",
+							"host": [
+								"{{Gomedics-local}}"
+							],
+							"path": [
+								"reg",
+								"user",
+								"verification"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user-login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phoneNumber\":\"09043040805\",\r\n    \"password\":\"v2341xcck\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{live}}/login/user",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"login",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user rating",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n  \"doctorCode\": \"\",\r\n  \"rating\": \"\",\r\n  \"reviewComments\":\"\"\r\n\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{live}}/submit/rating",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"submit",
+								"rating"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get doctor profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{live}}/doctor/profile/Z9FXOD",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"doctor",
+								"profile",
+								"Z9FXOD"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify all banks",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accountNumber\":\"0097238743\",\r\n    \"bankCode\":\"044\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{live}}/verifybank",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"verifybank"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-banks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{live}}/allbanks",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"allbanks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify any user field",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJlcmpvbkBnbWFpbC5jb20iLCJpYXQiOjE2OTc4MTQ1OTl9.EjlCUUMkpO4-WY4DUMmfpXn7hmEmxyIdFN9lE3cT0AQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fieldName\": \"email\",\r\n  \"data\": \"berjon@gmail.com\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Gomedics-local}}/verify/any/user/field",
+							"host": [
+								"{{Gomedics-local}}"
+							],
+							"path": [
+								"verify",
+								"any",
+								"user",
+								"field"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update any user field",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJlcmpvbkBnbWFpbC5jb20iLCJpYXQiOjE2OTc4MTQ1OTl9.EjlCUUMkpO4-WY4DUMmfpXn7hmEmxyIdFN9lE3cT0AQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"field\": \"email\",\r\n  \"userCode\": \"VPHI7E\",\r\n  \"data\": \"new_email@example.com\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Gomedics-local}}/update/any/user/field",
+							"host": [
+								"{{Gomedics-local}}"
+							],
+							"path": [
+								"update",
+								"any",
+								"user",
+								"field"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "doctors",
+			"item": [
+				{
+					"name": "doctor reg",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phoneNumber\":\"09043040809\",\r\n    \"email\":\"ebeto@gmail.com\",\r\n    \"fullName\":\"vint brown\",\r\n    \"password\":\"v2341fgcck\",\r\n     \"wallet\":\"55543em\"\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{live}}/doctor/reg",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"doctor",
+								"reg"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "doc login",
+					"request": {
+						"method": "POST",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "doctor profile update",
+					"request": {
+						"method": "POST",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "user rating for doctor's Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVrQGdtYWlsLmNvbSIsImlhdCI6MTY5NjM3NTMyNH0.Ak6JGnJuiHIUe6cENMMWFKM1rSOQLya7K9mWLanu00k",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n  \"doctorCode\": \"Z9FXOD\",\r\n  \"rating\": 2.2,\r\n  \"reviewComments\":\"okay\"\r\n\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{live}}}/submit/rating",
+							"host": [
+								"{{live}}}"
+							],
+							"path": [
+								"submit",
+								"rating"
+							]
+						},
+						"description": "users to submit rating\n\nUser's rate doctor's via email"
+					},
+					"response": []
+				},
+				{
+					"name": "get doctor's profile with ratings Copy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiZmRAZ21haWwuY29tIiwiaWF0IjoxNjk2MzY3OTg5fQ.Wc99sy9PBNaf8a9zjTZWleLceWdMoa59cUPKmGLa59Q",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{live}}/doctor/profile/Z9FXOD",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"doctor",
+								"profile",
+								"Z9FXOD"
+							]
+						},
+						"description": "Get doctor profile with ratings"
+					},
+					"response": []
+				},
+				{
+					"name": "search doctors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImtheUBnbWFpbC5jb20iLCJpYXQiOjE2OTYzNzMzMTR9.rpco0rV5MtEI462eakWKjp2psKkOZMIQ74XNuO0aFWg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{live}}/search/doctors?hospital=Hospital XYZ",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"search",
+								"doctors"
+							],
+							"query": [
+								{
+									"key": "hospital",
+									"value": "Hospital XYZ"
+								}
+							]
+						},
+						"description": "Search doctors"
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:5190/searchDoctors?specialty=neurosurgery",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "verify doctor by phone",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phoneNumber\":\"09043040805\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{live}}/verify/doc/phoneNumber",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"verify",
+								"doc",
+								"phoneNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify any doctor field",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJlYmV0b0BnbWFpbC5jb20iLCJpYXQiOjE2OTc4MjQyNjZ9.53QBFA-UxlrlzE-mLPWsvZhMUu1wx-OZLZ8TUHdzZ78",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fieldName\": \"email\",\r\n  \"data\": \"ebeto@gmail.com\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{live}}/verify/any/field/doctor",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"verify",
+								"any",
+								"field",
+								"doctor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update any doctor field",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJlYmV0b0BnbWFpbC5jb20iLCJpYXQiOjE2OTc4MjQyNjZ9.53QBFA-UxlrlzE-mLPWsvZhMUu1wx-OZLZ8TUHdzZ78",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"field\": \"email\",\r\n  \"doctorCode\": \"E2WYNR\",\r\n  \"data\": \"email@example.com\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{live}}/update/any/field/doctor",
+							"host": [
+								"{{live}}"
+							],
+							"path": [
+								"update",
+								"any",
+								"field",
+								"doctor"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "DOMAIN",
+			"value": "https://doc.up.railway.app",
+			"type": "string"
+		}
+	]
+}

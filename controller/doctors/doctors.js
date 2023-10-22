@@ -2,7 +2,8 @@ const Doctors = require("../../models/doctor_reg");
 const bcrypt = require("bcrypt");
 const { Auth } = require("../../middlewares/auth");
 const { Utils } = require("../../middlewares/utils");
-const { Ratings } = require("../../models/users");
+// const { Ratings } = require("../../models/users");
+const {AppointmentReviews} = require("../../models/bookAppointment")
 const AvailableTimes = require("../../models/availableTime");
 const _ = require("lodash");
 const moment = require("moment");
@@ -326,16 +327,16 @@ const DoctorProfile = async (req, res) => {
   try {
     const doctorCode = req.params.doctorCode;
 
-    // Query Ratings table to get all ratings for the doctor
-    const ratings = await Ratings.findAll({
-      where: { doctorCode: doctorCode },
+    // Query AppointmentReviews to get all ratings for the doctor
+    const reviews = await AppointmentReviews.findAll({
+      where: { doctor_code: doctorCode },
       attributes: ["rating"],
     });
 
     // Calculate average rating
-    const totalRatings = ratings.length;
-    const sumRatings = ratings.reduce((sum, rating) => sum + rating.rating, 0);
-    const averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0;
+    const totalReviews = reviews.length;
+    const sumRatings = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = totalReviews > 0 ? sumRatings / totalReviews : 0;
 
     // Retrieve doctor's profile information, including the new fields
     const doctorProfile = await Doctors.findOne({
@@ -363,31 +364,31 @@ const DoctorProfile = async (req, res) => {
         "services",
         "experience",
         "fees"
-
       ],
     });
 
     if (!doctorProfile) {
       return res.send({
-        statusCode:400,
+        statusCode: 400,
         status: false,
         message: "Doctor profile not found",
       });
     }
 
     return res.send({
-      statusCode:200,
+      statusCode: 200,
       status: true,
       message: "Doctor profile retrieved successfully",
       data: {
         ...doctorProfile.dataValues,
+        totalRating: totalReviews, // You may need to adjust this based on your data model
         averageRating: averageRating,
       },
     });
   } catch (error) {
     console.error(error);
     return res.send({
-      statusCode:500,
+      statusCode: 500,
       status: false,
       message: "Failed to retrieve doctor profile",
       error: error.message,

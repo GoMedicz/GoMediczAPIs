@@ -72,7 +72,7 @@ const Reg = async (req, res) => {
     }
     // Get OTP and PhoneNumber from the frontend
     const { otp } = req.body;
-    
+
     // Send OTP to the user's phone number
     const otpMessage = `DO NOT DISCLOSE: Use ${otp} as your one-time password to continue your Gomedicz registration`;
     await sendOtp(phoneNumber, otpMessage);
@@ -155,6 +155,7 @@ const login = async (req, res) => {
   try {
     const { phoneNumber, password } = req.body;
     if (!phoneNumber || !password) {
+      
       return res.send({
         statusCode:400,
         status: false,
@@ -164,6 +165,7 @@ const login = async (req, res) => {
     }
     //find user
     const user = await User.findOne({ where: { phoneNumber: phoneNumber } });
+   
     if (!user) {
       return res.send({
         statusCode:400,
@@ -172,6 +174,9 @@ const login = async (req, res) => {
         error: utils.getMessage(" ACCOUNT_EXISTENCE_ERROR"),
       });
     }
+    
+
+
     //compare passwords
     const isMatchedPassword = await bcrypt.compare(password, user.password);
     if (!isMatchedPassword) {
@@ -189,7 +194,7 @@ const login = async (req, res) => {
       status: true,
       message: "login successful",
       token: token,
-      user_code: user_code,
+      user_code: user.user_code,
       wallet: user.wallet,
     });
   } catch (error) {

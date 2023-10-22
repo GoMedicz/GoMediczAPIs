@@ -13,9 +13,16 @@ const Support = sq.define('tbl_support',{
         allowNull: false,
     }
 
+},{
+    indexes: [
+        {
+            fields: ['email'], // Add an index on the 'email' field
+        },
+        // Add other indexes as needed
+    ],
 })
 
-Support.sync().then(()=>{
+Support.sync({force:true}).then(()=>{
     console.log('support model synced')
 })
 

@@ -7,6 +7,9 @@ const AvailableTimes = sq.define('tbl_available_times', {
   doctor_code: {
     type: DataTypes.STRING,
   },
+  appointment_code: {
+    type: DataTypes.STRING,
+  },
   available_days: {
     type: DataTypes.JSON,
 
