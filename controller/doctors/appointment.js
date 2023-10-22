@@ -188,7 +188,37 @@ const bookAppointment = async (req, res) => {
         });
     }
 };
+const getAppointmentReviewsByDoctorCode = async (req, res) => {
+  try {
+    const doctorCode = req.params.doctorCode;
 
+    const appointmentReviews = await AppointmentReviews.findAll({
+      where: { doctor_code: doctorCode },
+    });
+
+    if (appointmentReviews.length === 0) {
+      return res.status(404).json({
+        statusCode: 404,
+        status: false,
+        message: "No appointment reviews found for the specified doctor.",
+      });
+    }
+
+    return res.status(200).json({
+      statusCode: 200,
+      status: true,
+      appointmentReviews,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      statusCode: 500,
+      status: false,
+      message: "Failed to retrieve appointment reviews",
+      error: error.message,
+    });
+  }
+};
 
   
 
@@ -196,5 +226,6 @@ const bookAppointment = async (req, res) => {
 
   module.exports = {
     bookAppointment,
-    submitAppointmentReview
+    submitAppointmentReview,
+    getAppointmentReviewsByDoctorCode
   }
