@@ -22,7 +22,7 @@ const Support = sq.define('tbl_support',{
     ],
 })
 
-Support.sync({force:true}).then(()=>{
+Support.sync().then(()=>{
     console.log('support model synced')
 })
 

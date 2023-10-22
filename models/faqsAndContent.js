@@ -29,7 +29,7 @@ const Faqs = sq.define('tbl_faqs',{
     ],
 })
 
-Faqs.sync({force:true}).then(()=>{
+Faqs.sync().then(()=>{
     console.log('faqs model synced')
 })
 
