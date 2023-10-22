@@ -48,7 +48,8 @@ const bookAppointment = async (req, res) => {
       // Upload the lab report (if provided)
       uploadLabReport.single('labReport')(req, res, async (err) => {
         if (err) {
-          return res.status(400).json({
+          return res.send({
+            statusCode:400,
             status: false,
             message: 'Lab report upload failed',
             error: err.message,
@@ -64,7 +65,8 @@ const bookAppointment = async (req, res) => {
         const appointmentCode = generateAppointmentCode()
         const user = await User.findOne({ where: { email: userEmail } });
       if (!user) {
-        return res.status(400).json({
+        return res.send({
+          statusCode:400,
           status: false,
           message: 'User not found',
         });
@@ -91,7 +93,8 @@ const bookAppointment = async (req, res) => {
         });
   
         // Include the lab report URL in the response data
-        return res.status(200).json({
+        return res.send({
+          statusCode:200,
           status: true,
           message: 'Appointment booked successfully',
           data: {
@@ -102,7 +105,8 @@ const bookAppointment = async (req, res) => {
       });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({
+      return res.send({
+        statusCode:500,
         status: false,
         message: 'Failed to book appointment',
         error: error.message,
@@ -119,7 +123,7 @@ const bookAppointment = async (req, res) => {
 
         // Validate the request data
         if (!data.appointment_code || !data.doctor_code || !data.rating || !data.reviewComments) {
-            return res.status(400).json({
+            return res.send({
                 statusCode: 400,
                 status: false,
                 message: "Invalid data. Please provide appointment_code, doctor_code, rating, and reviewComments.",
@@ -130,7 +134,7 @@ const bookAppointment = async (req, res) => {
         // Retrieve user code from the authenticated user
         const user = await User.findOne({ where: { email: userEmail } });
         if (!user) {
-            return res.status(400).json({
+            return res.send({
                 statusCode: 400,
                 status: false,
                 message: 'User not found',
@@ -149,7 +153,7 @@ const bookAppointment = async (req, res) => {
         console.log('Query result (existingAppointment):', existingAppointment);
 
         if (!existingAppointment) {
-            return res.status(404).json({
+            return res.send({
                 statusCode: 404,
                 status: false,
                 message: "Appointment not found or not associated with the user.",
@@ -169,14 +173,14 @@ const bookAppointment = async (req, res) => {
         // Update the totalRating field in the Doctors model (you may need to calculate the average rating)
 
         // Return a success response
-        return res.status(200).json({
+        return res.send({
             statusCode: 200,
             status: true,
             message: "Rating and review submitted successfully.",
         });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({
+        return res.send({
             statusCode: 500,
             status: false,
             message: "Failed to submit rating and review.",

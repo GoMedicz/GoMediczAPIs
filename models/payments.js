@@ -11,7 +11,7 @@ const DoctorPayment = sq.define('tbl_doctor_payments', {
         autoIncrement: true,
         allowNull: false,
         },
-        code: {
+        doctor_code: {
           type: DataTypes.STRING,
           allowNull: false
         },
@@ -115,16 +115,9 @@ const Withdrawal = sq.define('tbl_doctor_payments', {
           type: DataTypes.STRING,
           allowNull: true
         },
-        process_by: {
-          type: DataTypes.STRING,
-          allowNull: true
-        },
+
         status: {
           type: DataTypes.STRING,
-          allowNull: true
-        },
-        remark: {
-          type: DataTypes.TEXT,
           allowNull: true
         },
         transaction_mode: {
