@@ -20,7 +20,7 @@ const sendOtp = async (phoneNumber, otp) => {
     }
 
     const message = await twilioClient.messages.create({
-      body: `Your OTP: ${otp}`,
+      body: `- ${otp}`,
       from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
       to: phoneNumber,
     });

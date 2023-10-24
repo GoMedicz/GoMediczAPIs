@@ -5,20 +5,8 @@ const multer = require('multer');
 const path = require('path');
 const {User} = require('../../models/users')
 const {AppointmentReviews,Appointments}=require("../../models/bookAppointment")
+const {uploadLabReport} = require("../multerConfig")
 
-// Define the storage for lab reports using multer
-const labReportStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/lab_reports'); // Store lab reports in the 'uploads/lab_reports' directory
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, uniqueSuffix + ext); // Generate a unique filename for the lab report
-  },
-});
-
-const uploadLabReport = multer({ storage: labReportStorage });
 
 const generateAppointmentCode = () => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -40,28 +28,19 @@ const generateAppointmentCode = () => {
 
 const bookAppointment = async (req, res) => {
     try {
+
       const { appointmentDate, appointmentReason, doctor_code } = req.body;
+      console.log(req.body)
       const userEmail = req.user.email; // Assuming user is authenticated
-     
-    
-  
-      // Upload the lab report (if provided)
-      uploadLabReport.single('labReport')(req, res, async (err) => {
-        if (err) {
-          return res.send({
-            statusCode:400,
-            status: false,
-            message: 'Lab report upload failed',
-            error: err.message,
-          });
-        }
-  
+
+
         // Check if lab report was uploaded
         const labReportPath = req.file ? req.file.path : null;
-  
+
         // Construct the URL for the lab report
         const labReportUrl = labReportPath ? `https://localhost:5190/${labReportPath}` : null;
 
+      // Upload the lab report (if provided)
         const appointmentCode = generateAppointmentCode()
         const user = await User.findOne({ where: { email: userEmail } });
       if (!user) {
@@ -85,6 +64,7 @@ const bookAppointment = async (req, res) => {
            // Assign the lab report path if uploaded
 
         });
+        console.log(appointment)
   
         // Increment totalAppointmentsBooked in the Doctors model
         await Doctors.increment('totalAppointmentsBooked', {
@@ -102,7 +82,7 @@ const bookAppointment = async (req, res) => {
             labReportUrl: labReportUrl,
           },
         });
-      });
+      
     } catch (error) {
       console.error(error);
       return res.send({

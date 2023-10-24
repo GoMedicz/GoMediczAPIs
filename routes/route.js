@@ -8,10 +8,14 @@ const hospital = require("../controller/Hospital/hospital");
 const lab = require("../controller/Labs/labs");
 const support = require("../controller/support");
 const appointment = require("../controller/doctors/appointment");
+const {uploadLabReport} = require("../controller/multerConfig")
+const transactions = require("../controller/payments");
 const {
   loginValidate,
   userOtpValidation,
   userRegV,
+  paymentValidation,
+  withdrawalValidation,
 } = require("../middlewares/userValidator");
 
 const auth = new Auth();
@@ -149,7 +153,7 @@ authRouter.post("/api/faqs", auth.tokenRequired, support.faqsAndContent);
 //book appointment
 authRouter.post(
   "/api/book/appointment",
-  auth.tokenRequired,
+  auth.tokenRequired, uploadLabReport.single('labReport'),
   appointment.bookAppointment
 );
 authRouter.get(
@@ -162,6 +166,11 @@ authRouter.post(
   auth.tokenRequired,
   appointment.submitAppointmentReview
 );
+authRouter.post("/api/add/payment", auth.tokenRequired, paymentValidation, transactions.addPayment)
+authRouter.post("/api/add/withdrawal", auth.tokenRequired, withdrawalValidation, transactions.createWithdrawal)
+authRouter.post("/api/get/earnings", auth.tokenRequired, transactions.getEarnings)
+authRouter.get("/api/get/withdrawal/:wallet", auth.tokenRequired, transactions.getTransactions)
+authRouter.get("/api/balance/:wallet", auth.tokenRequired, transactions.getBalance)
 
 module.exports = {
   authRouter,

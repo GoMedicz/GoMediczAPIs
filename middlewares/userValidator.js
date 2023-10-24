@@ -170,6 +170,74 @@ const validation = joi.object({
 
 
 
+  const paymentVal = joi.object({
+    doctor_code: joi.string().required(),
+    wallet: joi.string().required(),
+    appointment_code: joi.string().required(),
+    user_code: joi.string().required(),
+    amount: joi.string(),
+    discount:joi.string(),
+    payer:joi.string(),
+    reference:joi.string(),
+    payment_data:joi.string(),
+    date_paid:joi.string(),
+    method:joi.string()
+
+  });
+
+  const paymentValidation = async (req, res, next) => {
+    try {
+      const validated = paymentVal.validate(req.body);
+      if (validated.error) {
+        res.status(400);
+        return res.json({
+          error: utils.getMessage("DATA_VALIDATION_ERROR"),
+        });
+      }
+      next();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const withdrawalVal = joi.object({
+    doctor_code: joi.string().required(),
+    wallet: joi.string().required(),
+    bank_code: joi.string().required(),
+    amount: joi.string(),
+    account_number:joi.string(),
+    bank_name:joi.string(),
+    account_name:joi.string(),
+    date_request:joi.string(),
+    date_paid:joi.string(),
+    branch_code:joi.string(),
+    status:joi.string(),
+    transaction_mode:joi.string(),
+    transaction_ref:joi.string(),
+
+  });
+
+  const withdrawalValidation = async (req, res, next) => {
+    try {
+      const validated = withdrawalVal.validate(req.body);
+      if (validated.error) {
+        res.status(400);
+        return res.json({
+          error: utils.getMessage("DATA_VALIDATION_ERROR"),
+        });
+      }
+      next();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+
+
+
+
+
 
 
 
@@ -180,7 +248,9 @@ const validation = joi.object({
     userOtpValidation,
     docValidation,
     docLogin,
-    userRegV
+    userRegV,
+    paymentValidation,
+    withdrawalValidation
     
   
     // updateDoctorProfileValidation

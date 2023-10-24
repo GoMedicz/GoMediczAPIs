@@ -25,4 +25,22 @@ const fileFilter = (req, file, cb) => {
 // Create the Multer instance with the storage and file filter
 const upload = multer({ storage, fileFilter });
 
-module.exports = upload;
+
+
+const labReportStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/lab_reports'); // Store lab reports in the 'uploads/lab_reports' directory
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, uniqueSuffix + ext); // Generate a unique filename for the lab report
+  },
+});
+
+const uploadLabReport = multer({ storage: labReportStorage });
+
+
+
+
+module.exports = {upload,uploadLabReport}
