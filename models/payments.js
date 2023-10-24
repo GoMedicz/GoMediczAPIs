@@ -29,7 +29,7 @@ const DoctorPayment = sq.define('tbl_doctor_payments', {
           allowNull: false
         },
        amount: {
-          type: DataTypes.STRING,
+          type: DataTypes.INTEGER,
           allowNull: false
         },
         discount: {
@@ -55,8 +55,39 @@ const DoctorPayment = sq.define('tbl_doctor_payments', {
         payment_data: {
           type: DataTypes.STRING,
           defaultValue: "[]",
-          allowNull: true
         }
+},{
+  indexes: [
+      // Index for the 'doctor_code' field for quick lookup by doctor code
+      {
+          fields: ['doctor_code'],
+      },
+      // Index for the 'wallet' field for quick lookup by wallet
+      {
+          fields: ['wallet'],
+      },
+      // Index for the 'appointment_code' field for quick lookup by appointment code
+      {
+          fields: ['appointment_code'],
+      },
+      // Index for the 'user_code' field for quick lookup by user code
+      {
+          fields: ['user_code'],
+      },
+      // Index for the 'method' field for quick lookup by payment method
+      {
+          fields: ['method'],
+      },
+      // Index for the 'date_paid' field for quick lookup by payment date
+      {
+          fields: ['date_paid'],
+      },
+      // Index for the 'reference' field for quick lookup by payment reference
+      {
+          fields: ['reference'],
+      },
+      // ... add more indexes as needed ...
+  ],
 });
 
 DoctorPayment.sync().then(() => {
@@ -66,7 +97,7 @@ DoctorPayment.sync().then(() => {
 
 
 // Define the withdrawal model
-const Withdrawal = sq.define('tbl_doctor_payments', {
+const Withdrawal = sq.define('tbl_withdrawal', {
     id: {
         type: DataTypes.INTEGER,
         unique: true,
@@ -84,7 +115,7 @@ const Withdrawal = sq.define('tbl_doctor_payments', {
           allowNull: false
         },
        amount: {
-          type: DataTypes.STRING,
+          type: DataTypes.INTEGER,
           allowNull: false
         },
         bank_code: {
@@ -104,11 +135,11 @@ const Withdrawal = sq.define('tbl_doctor_payments', {
           allowNull: false
         },
         date_request: {
-          type: DataTypes.DATEONLY,
+          type: DataTypes.DATE,
           allowNull: true
         },
         date_paid: {
-          type: DataTypes.DATEONLY,
+          type: DataTypes.DATE,
           allowNull: true
         },
         branch_code: {
@@ -128,7 +159,31 @@ const Withdrawal = sq.define('tbl_doctor_payments', {
           type: DataTypes.TEXT,
           allowNull: true
         },
-  },
+  },{
+    indexes: [
+        // Index for the 'doctor_code' field for quick lookup by doctor code
+        {
+            fields: ['doctor_code'],
+        },
+        // Index for the 'wallet' field for quick lookup by wallet
+        {
+            fields: ['wallet'],
+        },
+        // Index for the 'bank_code' field for quick lookup by bank code
+        {
+            fields: ['bank_code'],
+        },
+        // Index for the 'account_number' field for quick lookup by account number
+        {
+            fields: ['account_number'],
+        },
+        // Index for the 'transaction_mode' field for quick lookup by transaction mode
+        {
+            fields: ['transaction_mode'],
+        },
+        // ... add more indexes as needed ...
+    ],
+}
 );
 
 Withdrawal.sync().then(() => {

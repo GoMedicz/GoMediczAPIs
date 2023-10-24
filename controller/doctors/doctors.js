@@ -192,11 +192,12 @@ const docLogin = async (req, res) => {
 
 const updateDoctorProfile = async (req, res) => {
   try {
+    console.log(req.body)
     // Use Multer middleware to handle file uploads
     upload.single("profilePicture")(req, res, async (err) => {
       if (err) {
         return res.send({
-          statusCode:400,
+          statusCode: 400,
           status: false,
           message: "Profile picture upload failed",
           error: err.message,
@@ -211,7 +212,7 @@ const updateDoctorProfile = async (req, res) => {
 
       if (!existingDoctor) {
         return res.send({
-          statusCode:400,
+          statusCode: 400,
           status: false,
           message: "Doctor not found",
         });
@@ -220,13 +221,72 @@ const updateDoctorProfile = async (req, res) => {
       // Format the "lastLogin" timestamp
       const formattedLastLogin = moment().format("YYYY-MM-DD HH:mm:ss.SSS");
 
-      // Update the doctor's profile (excluding availableTimes) with the formatted "lastLogin"
-      const updatedDoctor = await existingDoctor.update({
-        ...req.body, // Use the data from the request body
-        lastLogin: formattedLastLogin,
-        // Store the profile picture filename in the database
-        profilePicture: req.file.filename, // req.file contains the uploaded file information
-      });
+      // Create an object to store the update data
+      const updateData = {};
+
+      // Update fields individually based on your provided response data
+      if (req.body.fullName) {
+        updateData.fullName = req.body.fullName;
+      }
+
+      if (req.body.email) {
+        updateData.email = req.body.email;
+      }
+
+      if (req.body.phoneNumber) {
+        updateData.phoneNumber = req.body.phoneNumber;
+      }
+
+      if (req.body.hospital) {
+        updateData.hospital = req.body.hospital;
+      }
+
+      if (req.body.about) {
+        updateData.about = req.body.about;
+      }
+
+      if (req.body.profilePicture) {
+        updateData.profilePicture = req.body.profilePicture;
+      }
+
+      if (req.body.gender) {
+        updateData.gender = req.body.gender;
+      }
+
+      if (req.body.services) {
+        updateData.services = req.body.services;
+      }
+
+      if (req.body.wallet) {
+        updateData.wallet = req.body.wallet;
+      }
+
+      if (req.body.serviceAt) {
+        updateData.serviceAt = req.body.serviceAt;
+      }
+
+      if (req.body.specification) {
+        updateData.specification = req.body.specification;
+      }
+
+      if (req.body.experience) {
+        updateData.experience = req.body.experience;
+      }
+
+      if (req.body.fees) {
+        updateData.fees = req.body.fees;
+      }
+
+      // Check if req.file exists and add the profilePicture property if it does
+      if (req.file) {
+        updateData.profilePicture = req.file.filename;
+      }
+
+      // Add the lastLogin property
+      updateData.lastLogin = formattedLastLogin;
+
+      // Update the doctor's profile with the formatted "lastLogin" and other data
+      const updatedDoctor = await existingDoctor.update(updateData);
 
       // Update or create AvailableTimes for the doctor
       await AvailableTimes.upsert({
@@ -250,7 +310,7 @@ const updateDoctorProfile = async (req, res) => {
       };
 
       return res.send({
-        statusCode:200,
+        statusCode: 200,
         status: true,
         message: "Doctor profile updated successfully",
         data: responseData,
@@ -259,13 +319,14 @@ const updateDoctorProfile = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.send({
-      statusCode:500,
+      statusCode: 500,
       status: false,
       message: "Unable to update doctor profile",
       error: error.message,
     });
   }
 };
+
 
 
 const submitRating = async (req, res) => {
