@@ -8,7 +8,7 @@ const hospital = require("../controller/Hospital/hospital");
 const lab = require("../controller/Labs/labs");
 const support = require("../controller/support");
 const appointment = require("../controller/doctors/appointment");
-const {uploadLabReport} = require("../controller/multerConfig")
+const {uploadLabReport, upload} = require("../controller/multerConfig")
 const transactions = require("../controller/payments");
 const {
   loginValidate,
@@ -73,6 +73,7 @@ authRouter.get(
 authRouter.post(
   "/api/update/doctor/profile",
   auth.tokenRequired,
+  upload.single("profilePicture"),
   docAuth.updateDoctorProfile
 );
 //get all doctors profile

@@ -38,8 +38,24 @@ const labReportStorage = multer.diskStorage({
   },
 });
 
-const uploadLabReport = multer({ storage: labReportStorage });
+// Define a custom file filter function
+const labReportFileFilter = (req, file, cb) => {
+  // Check the file type by its MIME type or extension
+  const allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg','text/plain']; // Include 'image/jpg' for JPEG images
 
+  if (allowedMimeTypes.includes(file.mimetype)) {
+    cb(null, true); // Accept the file
+  } else {
+    cb(new Error('Invalid file type'), false); // Reject the file
+  }
+};
+
+const uploadLabReport = multer({
+  storage: labReportStorage,
+  fileFilter: labReportFileFilter, // Set the custom file filter
+});
+
+// Now you can use the uploadLabReport middleware to accept both document and image files.
 
 
 

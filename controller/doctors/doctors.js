@@ -194,15 +194,7 @@ const updateDoctorProfile = async (req, res) => {
   try {
     console.log(req.body)
     // Use Multer middleware to handle file uploads
-    upload.single("profilePicture")(req, res, async (err) => {
-      if (err) {
-        return res.send({
-          statusCode: 400,
-          status: false,
-          message: "Profile picture upload failed",
-          error: err.message,
-        });
-      }
+
 
       const userEmail = req.user.email; // Get the email from the user token
 
@@ -315,8 +307,8 @@ const updateDoctorProfile = async (req, res) => {
         message: "Doctor profile updated successfully",
         data: responseData,
       });
-    });
-  } catch (error) {
+    }
+  catch (error) {
     console.error(error);
     return res.send({
       statusCode: 500,
@@ -325,7 +317,8 @@ const updateDoctorProfile = async (req, res) => {
       error: error.message,
     });
   }
-};
+}
+
 
 
 
