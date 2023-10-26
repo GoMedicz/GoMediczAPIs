@@ -142,44 +142,73 @@ const addPayment = async(req, res)=>{
 }
   }
 
+  const getDoctorPayments = async (req, res) => {
+    try {
+      const wallet = req.params.wallet; 
+  
+      
+      const payments = await DoctorPayment.findAll({
+        where: { wallet: wallet },
+      });
+      return res.send({
+        statusCode: 200,
+        type: 'success',
+        message: 'Payments retrieved successfully',
+        data: payments,
+      });
+    } catch (error) {
+      return res.send({
+        statusCode: 500,
+        status: 'error',
+        message: 'Unable to retrieve payments',
+        error: error.message,
+      });
+    }
+  };
+
 
 
   const getBalance = async (req, res) => {
     try {
       const wallet = req.params.wallet;
   
-      // Calculate the balance using Sequelize
-      const balanceResult = await DoctorPayment.findAll({
+      // Query to calculate the total payments for the specified wallet
+      const paymentQuery = await DoctorPayment.findAll({
         attributes: [
-          [Sequelize.literal('SUM(CAST(amount AS INTEGER))'), 'total_payments'],
+          [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_payments'],
         ],
         where: {
           wallet: wallet,
         },
       });
   
-      const withdrawals = await Withdrawal.findAll({
+      // Query to calculate the total withdrawals for the specified wallet
+      const withdrawalQuery = await Withdrawal.findAll({
         attributes: [
-          [Sequelize.literal('SUM(CAST(amount AS INTEGER))'), 'total_withdrawals'],
+          [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_withdrawals'],
         ],
         where: {
           wallet: wallet,
         },
       });
   
-      const balance = (balanceResult[0]?.dataValues.total_payments || 0) -
-        (withdrawals[0]?.dataValues.total_withdrawals || 0);
+      // Extract the total payments and total withdrawals from the queries
+      const totalPayments = paymentQuery[0]?.dataValues.total_payments || 0;
+      const totalWithdrawals = withdrawalQuery[0]?.dataValues.total_withdrawals || 0;
   
-      return res.send({
+      // Calculate the balance
+      const balance = totalPayments - totalWithdrawals;
+  
+      return res.status(200).json({
         statusCode: 200,
         type: 'success',
         data: { balance },
       });
     } catch (error) {
-      console.log(error);
-      return res.send({
+      console.error(error);
+      return res.status(500).json({
         statusCode: 500,
-        status: false,
+        type: 'error',
         message: 'Unable to get balance',
         error: error.message,
       });
@@ -187,11 +216,4 @@ const addPayment = async(req, res)=>{
   };
   
 
-
-
-
-
-
-
-
-module.exports={createWithdrawal, getTransactions, getEarnings, addPayment, getBalance}
+module.exports={createWithdrawal, getTransactions, getEarnings, addPayment, getBalance, getDoctorPayments}

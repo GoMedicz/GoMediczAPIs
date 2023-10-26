@@ -167,11 +167,12 @@ authRouter.post(
   auth.tokenRequired,
   appointment.submitAppointmentReview
 );
-authRouter.post("/api/add/payment", auth.tokenRequired, paymentValidation, transactions.addPayment)
-authRouter.post("/api/add/withdrawal", auth.tokenRequired, withdrawalValidation, transactions.createWithdrawal)
-authRouter.post("/api/get/earnings", auth.tokenRequired, transactions.getEarnings)
-authRouter.get("/api/get/withdrawal/:wallet", auth.tokenRequired, transactions.getTransactions)
-authRouter.get("/api/balance/:wallet", auth.tokenRequired, transactions.getBalance)
+authRouter.post("/api/doctor/payment/add", auth.tokenRequired, paymentValidation, transactions.addPayment)
+authRouter.post("/api/doctor/withdrawal", auth.tokenRequired, withdrawalValidation, transactions.createWithdrawal)
+authRouter.post("/api/get/doctor/earnings", auth.tokenRequired, transactions.getEarnings)
+authRouter.get("/api/get/doctor/withdrawal/:wallet", auth.tokenRequired, transactions.getTransactions)
+authRouter.get("/api/doctor/balance/:wallet", auth.tokenRequired, transactions.getBalance)
+authRouter.get("/api/get/doctor/payment/:wallet", auth.tokenRequired, transactions.getDoctorPayments)
 
 module.exports = {
   authRouter,

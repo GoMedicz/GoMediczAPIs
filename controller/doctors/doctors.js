@@ -190,125 +190,130 @@ const docLogin = async (req, res) => {
   }
 };
 
+const baseImageUrl = 'https://localhost:5190/uploads/'; // Replace with your actual base image URL
+
+const generateImageUrl = (fileName) => {
+  return baseImageUrl + fileName;
+};
+
 const updateDoctorProfile = async (req, res) => {
   try {
-    console.log(req.body)
     // Use Multer middleware to handle file uploads
 
+    const userEmail = req.user.email; // Get the email from the user token
 
-      const userEmail = req.user.email; // Get the email from the user token
+    const existingDoctor = await Doctors.findOne({
+      where: { email: userEmail }, // Find the doctor by email
+    });
 
-      const existingDoctor = await Doctors.findOne({
-        where: { email: userEmail }, // Find the doctor by email
-      });
-
-      if (!existingDoctor) {
-        return res.send({
-          statusCode: 400,
-          status: false,
-          message: "Doctor not found",
-        });
-      }
-
-      // Format the "lastLogin" timestamp
-      const formattedLastLogin = moment().format("YYYY-MM-DD HH:mm:ss.SSS");
-
-      // Create an object to store the update data
-      const updateData = {};
-
-      // Update fields individually based on your provided response data
-      if (req.body.fullName) {
-        updateData.fullName = req.body.fullName;
-      }
-
-      if (req.body.email) {
-        updateData.email = req.body.email;
-      }
-
-      if (req.body.phoneNumber) {
-        updateData.phoneNumber = req.body.phoneNumber;
-      }
-
-      if (req.body.hospital) {
-        updateData.hospital = req.body.hospital;
-      }
-
-      if (req.body.about) {
-        updateData.about = req.body.about;
-      }
-
-      if (req.body.profilePicture) {
-        updateData.profilePicture = req.body.profilePicture;
-      }
-
-      if (req.body.gender) {
-        updateData.gender = req.body.gender;
-      }
-
-      if (req.body.services) {
-        updateData.services = req.body.services;
-      }
-
-      if (req.body.wallet) {
-        updateData.wallet = req.body.wallet;
-      }
-
-      if (req.body.serviceAt) {
-        updateData.serviceAt = req.body.serviceAt;
-      }
-
-      if (req.body.specification) {
-        updateData.specification = req.body.specification;
-      }
-
-      if (req.body.experience) {
-        updateData.experience = req.body.experience;
-      }
-
-      if (req.body.fees) {
-        updateData.fees = req.body.fees;
-      }
-
-      // Check if req.file exists and add the profilePicture property if it does
-      if (req.file) {
-        updateData.profilePicture = req.file.filename;
-      }
-
-      // Add the lastLogin property
-      updateData.lastLogin = formattedLastLogin;
-
-      // Update the doctor's profile with the formatted "lastLogin" and other data
-      const updatedDoctor = await existingDoctor.update(updateData);
-
-      // Update or create AvailableTimes for the doctor
-      await AvailableTimes.upsert({
-        doctor_code: existingDoctor.doctor_code,
-        available_days: req.body.available_days,
-        available_start_time: req.body.available_start_time,
-        available_end_time: req.body.available_end_time,
-        minutesPerSection: req.body.minutesPerSection,
-        available_months: req.body.available_months,
-      });
-
-      // Fetch the updated AvailableTimes for the doctor
-      const doctorAvailableTimes = await AvailableTimes.findOne({
-        where: { doctor_code: existingDoctor.doctor_code },
-      });
-
-      // Include the AvailableTimes data in the response
-      const responseData = {
-        ...updatedDoctor.toJSON(),
-        availableTimes: doctorAvailableTimes.toJSON(),
-      };
-
+    if (!existingDoctor) {
       return res.send({
-        statusCode: 200,
-        status: true,
-        message: "Doctor profile updated successfully",
-        data: responseData,
+        statusCode: 400,
+        status: false,
+        message: "Doctor not found",
       });
     }
-  catch (error) {
+
+    // Format the "lastLogin" timestamp
+    const formattedLastLogin = moment().format("YYYY-MM-DD HH:mm:ss.SSS");
+
+    // Create an object to store the update data
+    const updateData = {};
+
+    // Update fields individually based on your provided response data
+    if (req.body.fullName) {
+      updateData.fullName = req.body.fullName;
+    }
+
+    if (req.body.email) {
+      updateData.email = req.body.email;
+    }
+
+    if (req.body.phoneNumber) {
+      updateData.phoneNumber = req.body.phoneNumber;
+    }
+
+    if (req.body.hospital) {
+      updateData.hospital = req.body.hospital;
+    }
+
+    if (req.body.about) {
+      updateData.about = req.body.about;
+    }
+
+    if (req.body.profilePicture) {
+      updateData.profilePicture = generateImageUrl(req.body.profilePicture); // Use the generated image URL
+    }
+
+    if (req.body.gender) {
+      updateData.gender = req.body.gender;
+    }
+
+    if (req.body.services) {
+      updateData.services = req.body.services;
+    }
+
+    if (req.body.wallet) {
+      updateData.wallet = req.body.wallet;
+    }
+
+    if (req.body.serviceAt) {
+      updateData.serviceAt = req.body.serviceAt;
+    }
+
+    if (req.body.specification) {
+      updateData.specification = req.body.specification;
+    }
+
+    if (req.body.experience) {
+      updateData.experience = req.body.experience;
+    }
+
+    if (req.body.fees) {
+      updateData.fees = req.body.fees;
+    }
+
+    // Check if req.file exists and add the profilePicture property if it does
+    if (req.file) {
+      const imageUrl = generateImageUrl(req.file.filename);
+      updateData.profilePicture = imageUrl;
+    }
+
+    // Add the lastLogin property
+    updateData.lastLogin = formattedLastLogin;
+
+    // Update the doctor's profile with the formatted "lastLogin" and other data
+    const updatedDoctor = await existingDoctor.update(updateData);
+
+    // Update or create AvailableTimes for the doctor
+    await AvailableTimes.upsert({
+      doctor_code: existingDoctor.doctor_code,
+      available_days: req.body.available_days,
+      available_start_time: req.body.available_start_time,
+      available_end_time: req.body.available_end_time,
+      minutesPerSection: req.body.minutesPerSection,
+      available_months: req.body.available_months,
+    });
+
+    // Fetch the updated AvailableTimes for the doctor
+    const doctorAvailableTimes = await AvailableTimes.findOne({
+      where: { doctor_code: existingDoctor.doctor_code },
+    });
+
+    // Include the AvailableTimes data and the image URL in the response
+    const responseData = {
+      // ...updatedDoctor.toJSON(),
+      // availableTimes: doctorAvailableTimes.toJSON(),
+      profilePicture: updateData.profilePicture // Include the image URL
+    };
+
+    return res.send({
+      statusCode: 200,
+      status: true,
+      message: "Doctor profile updated successfully",
+      data: responseData,
+    });
+  } catch (error) {
     console.error(error);
     return res.send({
       statusCode: 500,
@@ -317,8 +322,7 @@ const updateDoctorProfile = async (req, res) => {
       error: error.message,
     });
   }
-}
-
+};
 
 
 
