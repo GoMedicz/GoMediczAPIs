@@ -53,9 +53,9 @@ const validation = joi.object({
     phoneNumber: joi.string().required(),
     password: joi.string().min(5).required(),
     wallet: joi.string(),
-    serviceAt:joi.string(),
-    specification:joi.string(),
-    services:joi.string(),
+    serviceAt:joi.array(),
+    specification:joi.array(),
+    services:joi.array(),
 
   });
 
@@ -66,6 +66,7 @@ const validation = joi.object({
         res.status(400);
         return res.json({
           error: utils.getMessage("DATA_VALIDATION_ERROR"),
+          statusCode:400
         });
       }
       next();
@@ -91,6 +92,7 @@ const validation = joi.object({
         res.status(400);
         return res.json({
           error: utils.getMessage("DATA_VALIDATION_ERROR"),
+          statusCode:400
         });
       }
       next();
