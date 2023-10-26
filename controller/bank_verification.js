@@ -20,9 +20,10 @@ const getBanks = async (req, res)=>{
 
     const banks = response.data.data;
 
-    res.json({ banks });
+    res.send({status:true, statusCode:200, banks });
     } catch (error) {
-        res.status(500).json({
+        res.send({
+          statusCode:500,
             message:"unable to retrieve banks",
             error: utils.getMessage('UNKNOWN_ERROR')
 
@@ -46,9 +47,10 @@ const verifyBank = async (req, res)=>{
         );
 
         const accountName = response.data.data.account_name;
-        res.json({ accountName });
+        res.send({status:true, statusCode:200, accountName });
     } catch (error) {
-        res.status(500).json({
+        res.send({
+          statusCode:500,
             message:'unable to resolve user bank'
         })
     }

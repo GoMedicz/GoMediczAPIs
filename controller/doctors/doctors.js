@@ -190,7 +190,7 @@ const docLogin = async (req, res) => {
   }
 };
 
-const baseImageUrl = 'https://localhost:5190/uploads/'; // Replace with your actual base image URL
+const baseImageUrl = 'http://52.51.77.187:5190/uploads/'; // Replace with your actual base image URL
 
 const generateImageUrl = (fileName) => {
   return baseImageUrl + fileName;
@@ -277,6 +277,7 @@ const updateDoctorProfile = async (req, res) => {
     if (req.file) {
       const imageUrl = generateImageUrl(req.file.filename);
       updateData.profilePicture = imageUrl;
+      
     }
 
     // Add the lastLogin property
@@ -306,6 +307,7 @@ const updateDoctorProfile = async (req, res) => {
       // availableTimes: doctorAvailableTimes.toJSON(),
       profilePicture: updateData.profilePicture // Include the image URL
     };
+    console.log('Response Data:', responseData)
 
     return res.send({
       statusCode: 200,

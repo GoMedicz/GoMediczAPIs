@@ -130,7 +130,7 @@ const addPayment = async(req, res)=>{
       statusCode:200,
       type: 'success',
       message: 'Payment successfully added',
-      data: result,
+      
     });
   } catch (error) {
     return res.send({
