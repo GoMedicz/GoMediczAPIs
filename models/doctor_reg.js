@@ -130,7 +130,7 @@ const Doctors = sq.define('tbl_doctors',{
 
 // Doctors.hasMany(Ratings, { foreignKey: 'doctorCode' });
 
-Doctors.sync({force:true}).then(() => {
+Doctors.sync().then(() => {
     console.log('Doctors model synced');
 });
 
