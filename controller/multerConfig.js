@@ -4,7 +4,7 @@ const path = require('path');
 // Define storage for the uploaded images
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Set the destination folder where images will be stored
+    cb(null, 'images/doctors/profile-for-profiles'); // Set the destination folder where images will be stored
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -29,7 +29,7 @@ const upload = multer({ storage, fileFilter });
 
 const labReportStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/lab_reports'); // Store lab reports in the 'uploads/lab_reports' directory
+    cb(null, 'images/doctors/appointment-for-appointments'); // Store lab reports in the 'uploads/lab_reports' directory
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
