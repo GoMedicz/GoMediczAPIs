@@ -190,11 +190,6 @@ const docLogin = async (req, res) => {
   }
 };
 
-const baseImageUrl = 'http://52.51.77.187:5190/uploads/'; // Replace with your actual base image URL
-
-const generateImageUrl = (fileName) => {
-  return baseImageUrl + fileName;
-};
 
 const updateDoctorProfile = async (req, res) => {
   try {
@@ -242,7 +237,8 @@ const updateDoctorProfile = async (req, res) => {
     }
 
     if (req.body.profilePicture) {
-      updateData.profilePicture = generateImageUrl(req.body.profilePicture); // Use the generated image URL
+      // Store the file name in the profilePicture property
+      updateData.profilePicture = req.body.profilePicture;
     }
 
     if (req.body.gender) {
@@ -275,9 +271,8 @@ const updateDoctorProfile = async (req, res) => {
 
     // Check if req.file exists and add the profilePicture property if it does
     if (req.file) {
-      const imageUrl = generateImageUrl(req.file.filename);
-      updateData.profilePicture = imageUrl;
-      
+      // Store the file name in the profilePicture property
+      updateData.profilePicture = req.file.filename;
     }
 
     // Add the lastLogin property
@@ -301,13 +296,11 @@ const updateDoctorProfile = async (req, res) => {
       where: { doctor_code: existingDoctor.doctor_code },
     });
 
-    // Include the AvailableTimes data and the image URL in the response
+    // Include the AvailableTimes data and the image file name in the response
     const responseData = {
-      // ...updatedDoctor.toJSON(),
-      // availableTimes: doctorAvailableTimes.toJSON(),
-      profilePicture: updateData.profilePicture // Include the image URL
+      profilePicture: updateData.profilePicture, // Include the image file name
     };
-    console.log('Response Data:', responseData)
+   
 
     return res.send({
       statusCode: 200,
@@ -316,7 +309,7 @@ const updateDoctorProfile = async (req, res) => {
       data: responseData,
     });
   } catch (error) {
-    console.error(error);
+    
     return res.send({
       statusCode: 500,
       status: false,
@@ -325,8 +318,6 @@ const updateDoctorProfile = async (req, res) => {
     });
   }
 };
-
-
 
 const submitRating = async (req, res) => {
   try {
