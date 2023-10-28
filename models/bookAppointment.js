@@ -90,7 +90,7 @@ Appointments.belongsTo(User, {
   as: "user",
 });
 
-Appointments.sync({force:true}).then(() => {
+Appointments.sync().then(() => {
   console.log("appointments model synced");
 });
 
