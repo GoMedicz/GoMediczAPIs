@@ -33,28 +33,35 @@ const getBanks = async (req, res)=>{
 }
 
 
-const verifyBank = async (req, res)=>{
-    try {
-        const { accountNumber, bankCode } = req.body;
+const verifyBank = async (req, res) => {
+  try {
+    const { accountNumber, bankCode } = req.body;
 
-        const response = await axios.get(
-          `https://api.paystack.co/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.PAYSTACK_API_KEY}`,
-            },
-          }
-        );
+    const response = await axios.get(
+      `https://api.paystack.co/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.PAYSTACK_API_KEY}`,
+        },
+      }
+    );
 
-        const accountName = response.data.data.account_name;
-        res.send({status:true, statusCode:200, accountName });
-    } catch (error) {
-        res.send({
-          statusCode:500,
-            message:'unable to resolve user bank'
-        })
-    }
-}
+    const accountName = response.data.data.account_name;
+
+
+    res.send({
+      status: true,
+      statusCode: 200,
+      accountName,
+    });
+  } catch (error) {
+    res.send({
+      statusCode: 500,
+      message: 'Unable to resolve user bank',
+    });
+  }
+};
+
 
 
 

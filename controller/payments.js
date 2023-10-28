@@ -86,9 +86,8 @@ const getEarnings = async (req, res) => {
 
     // Calculate earnings using Sequelize's query function
     const earningResult = await sq.query(
-      'SELECT sum(CAST(amount as INTEGER)) as earning FROM tbl_doctor_payments WHERE wallet = :wallet',
+      data.sql,
       {
-        replacements: { wallet: wallet },
         type: Sequelize.QueryTypes.SELECT,
       }
     );
