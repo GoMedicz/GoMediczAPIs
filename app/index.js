@@ -1,6 +1,7 @@
 require("dotenv").config()
 const express = require('express');
 const app = express()
+app.use('/images', express.static(path.resolve(__dirname,'images')))
 // const db = require("./config/database")
 const {authRouter} = require('../routes/route')
 const bodyParser = require('body-parser');
