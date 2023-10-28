@@ -249,7 +249,7 @@ const getAppointmentsUnderDoctor = async (req, res) => {
           attributes: ['fullName', 'profilePicture'],
         },
       ],
-      attributes: ['appointmentDate', 'appointmentTime'],
+      attributes: ['appointmentDate', 'appointmentTime','appointmentReason'],
     });
 
     if (appointments.length === 0) {
