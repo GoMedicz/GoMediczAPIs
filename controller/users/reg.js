@@ -348,6 +348,84 @@ const logOut = async (req, res) => {
   }
 };
 
+const updateUserProfile = async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+    const existingUser = await User.findOne({
+      where: { email: userEmail },
+    });
+
+    if (!existingUser) {
+      return res.send({
+        statusCode: 400,
+        status: false,
+        message: 'User not found',
+      });
+    }
+
+    const updateData = {};
+
+    if (req.body.fullName) {
+      updateData.fullName = req.body.fullName;
+    }
+
+    if (req.body.email) {
+      updateData.email = req.body.email;
+    }
+
+    if (req.body.phoneNumber) {
+      updateData.phoneNumber = req.body.phoneNumber;
+    }
+
+    if (req.body.homeAddress) {
+      updateData.homeAddress = req.body.homeAddress;
+    }
+
+    if (req.body.workAddress) {
+      updateData.workAddress = req.body.workAddress;
+    }
+
+    if (req.body.otherAddress) {
+      updateData.otherAddress = req.body.otherAddress;
+    }
+
+    if (req.body.profilePicture) {
+      updateData.profilePicture = req.file.filename;
+    }
+
+    if (req.body.gender) {
+      updateData.gender = req.body.gender;
+    }
+
+    if (req.body.wallet) {
+      updateData.wallet = req.body.wallet;
+    }
+
+    // Add more fields as needed
+
+    const updatedUser = await existingUser.update(updateData);
+
+    const responseData = {
+      profilePicture: updateData.profilePicture,
+      // Include other updated fields as needed
+    };
+
+    return res.send({
+      statusCode: 200,
+      status: true,
+      message: 'User profile updated successfully',
+      data: responseData,
+    });
+  } catch (error) {
+    return res.send({
+      statusCode: 500,
+      status: false,
+      message: 'Unable to update user profile',
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   Reg,
   verifyOtp,
@@ -355,4 +433,5 @@ module.exports = {
   logOut,
   verifyAnyUserField,
   updateAnyUserField,
+  updateUserProfile
 };
