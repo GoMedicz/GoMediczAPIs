@@ -200,11 +200,45 @@ const getAppointmentReviewsByDoctorCode = async (req, res) => {
   }
 };
 
+const getAllAppointments = async (req, res) => {
+  try {
+    // Query the database to get all appointments
+    const appointments = await Appointments.findAll();
+    
+    // Check if there are no appointments
+    if (!appointments) {
+      return res.status(200).json({
+        statusCode: 200,
+        status: true,
+        message: 'No appointments found',
+        data: [],
+      });
+    }
+
+    // If appointments are found, return them in the response
+    return res.status(200).json({
+      statusCode: 200,
+      status: true,
+      message: 'Appointments retrieved successfully',
+      data: appointments,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      statusCode: 500,
+      status: false,
+      message: 'Failed to retrieve appointments',
+      error: error.message,
+    });
+  }
+};
+
   
 
 
 
   module.exports = {
+    getAllAppointments,
     bookAppointment,
     submitAppointmentReview,
     getAppointmentReviewsByDoctorCode

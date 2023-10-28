@@ -167,6 +167,11 @@ authRouter.post(
   auth.tokenRequired,
   appointment.submitAppointmentReview
 );
+authRouter.get(
+  "/api/get/appointments",
+  auth.tokenRequired,
+  appointment.getAllAppointments
+);
 authRouter.post("/api/doctor/payment/add", auth.tokenRequired, paymentValidation, transactions.addPayment)
 authRouter.post("/api/doctor/withdrawal", auth.tokenRequired, withdrawalValidation, transactions.createWithdrawal)
 authRouter.post("/api/get/doctor/earnings", auth.tokenRequired, transactions.getEarnings)
