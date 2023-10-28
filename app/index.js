@@ -2,8 +2,7 @@ require("dotenv").config()
 const path = require('path');
 const express = require('express');
 const app = express()
-app.use('/images', express.static(path.join(__dirname, 'images')))
-
+app.use('/images', express.static(path.resolve(__dirname,'images')))
 // const db = require("./config/database")
 const {authRouter} = require('../routes/route')
 const bodyParser = require('body-parser');
@@ -33,6 +32,9 @@ app.use(express.urlencoded({ extended: true }));
 
 
 const PORT = process.env.PORT
+
+console.log(path.resolve(__dirname,'images'))
+
 
 
 
