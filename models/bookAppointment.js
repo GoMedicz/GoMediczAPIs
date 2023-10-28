@@ -1,13 +1,12 @@
+const { sq } = require("../config/database");
+const Sequelize = require("sequelize");
+const { DataTypes } = require("sequelize");
+const Doctors = require("./doctor_reg");
+const {User} = require("./users");
 
-const { sq } = require('../config/database');
-const Sequelize = require('sequelize');
-const { DataTypes } = require('sequelize');
-const Doctors = require('./doctor_reg')
-const Users = require('./users')
-
-
-
-const Appointments = sq.define('tbl_appointments', {
+const Appointments = sq.define(
+  "tbl_appointments",
+  {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -17,11 +16,11 @@ const Appointments = sq.define('tbl_appointments', {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    appointment_code:{
+    appointment_code: {
       type: DataTypes.STRING,
-        allowNull: false,
-        primaryKey: true, // Add primaryKey constraint
-        unique: true,
+      allowNull: false,
+      primaryKey: true, // Add primaryKey constraint
+      unique: true,
     },
     appointmentReason: {
       type: DataTypes.STRING,
@@ -34,10 +33,8 @@ const Appointments = sq.define('tbl_appointments', {
       type: DataTypes.STRING,
     },
     appointmentTime: {
-      type: DataTypes.STRING,
-    },
-    attachment: {
-      type: DataTypes.STRING,
+      allowNull: false,
+      type: DataTypes.TIME,
     },
     labReportPath: {
       type: DataTypes.STRING, // Path to lab report PDF files
@@ -46,16 +43,16 @@ const Appointments = sq.define('tbl_appointments', {
       type: DataTypes.STRING,
       allowNull: false,
       references: {
-        model: 'tbl_doctors',
-        key: 'doctor_code',
+        model: "tbl_doctors",
+        key: "doctor_code",
       },
     },
-    user_code:{
+    user_code: {
       type: DataTypes.STRING,
       allowNull: false,
       references: {
-        model: 'tbl_users',
-        key: 'user_code',
+        model: "tbl_users",
+        key: "user_code",
       },
     },
 
@@ -63,104 +60,110 @@ const Appointments = sq.define('tbl_appointments', {
       type: DataTypes.STRING,
       allowNull: false,
       references: {
-        model: 'tbl_users',
-        key: 'email',
+        model: "tbl_users",
+        key: "email",
       },
     },
-  },{
+  },
+  {
     indexes: [
       {
-          unique: true,
-          fields: ['appointment_code'], // Create a unique index on appointment_code
+        unique: true,
+        fields: ["appointment_code"], // Create a unique index on appointment_code
       },
       {
-          fields: ['doctor_code'],
+        fields: ["doctor_code"],
       },
       {
-          fields: ['user_code'],
+        fields: ["user_code"],
       },
       {
-          fields: ['userEmail'],
+        fields: ["userEmail"],
       },
-  ],
-  });
+    ],
+  }
+);
 
+Appointments.belongsTo(User, {
+  foreignKey: "user_code",
+  targetKey: "user_code",
+  as: "user",
+});
 
-  Appointments.sync().then(() => {
-    console.log('appointments model synced');
-  });
+Appointments.sync({force:true}).then(() => {
+  console.log("appointments model synced");
+});
 
-
-
-
-
-  const AppointmentReviews = sq.define('tbl_appointment_reviews', {
+const AppointmentReviews = sq.define(
+  "tbl_appointment_reviews",
+  {
     id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
     appointment_code: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        references: {
-            model: 'tbl_appointments',
-            key: 'appointment_code',
-        },
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "tbl_appointments",
+        key: "appointment_code",
+      },
     },
     user_code: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        references: {
-            model: 'tbl_users',
-            key: 'user_code',
-        },
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "tbl_users",
+        key: "user_code",
+      },
     },
     doctor_code: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        references: {
-            model: 'tbl_doctors',
-            key: 'doctor_code',
-        },
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "tbl_doctors",
+        key: "doctor_code",
+      },
     },
     rating: {
-        type: DataTypes.DECIMAL(5, 2),
-        allowNull: false,
+      type: DataTypes.DECIMAL(5, 2),
+      allowNull: false,
     },
     reviewComments: {
-        type: DataTypes.TEXT,
+      type: DataTypes.TEXT,
     },
     date_reviewed: {
-        type: DataTypes.DATE,
-        allowNull: false,
+      type: DataTypes.DATE,
+      allowNull: false,
     },
     totalRating: {
-        type: DataTypes.DECIMAL,
-        defaultValue: 0,
+      type: DataTypes.DECIMAL,
+      defaultValue: 0,
     },
     totalAppointmentsBooked: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
     // Include other fields you want to add to the model
-},{
-  indexes: [
-    {
-        fields: ['appointment_code'],
-    },
-    {
-        fields: ['user_code'],
-    },
-    {
-        fields: ['doctor_code'],
-    },
-],
-});
+  },
+  {
+    indexes: [
+      {
+        fields: ["appointment_code"],
+      },
+      {
+        fields: ["user_code"],
+      },
+      {
+        fields: ["doctor_code"],
+      },
+    ],
+  }
+);
 
 AppointmentReviews.sync().then(() => {
-    console.log('appointments model synced');
+  console.log("appointments model synced");
 });
 
-
-module.exports = {Appointments,AppointmentReviews}
+module.exports = { Appointments, AppointmentReviews };

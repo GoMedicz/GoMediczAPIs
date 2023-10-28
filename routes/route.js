@@ -32,6 +32,8 @@ authRouter.post(
   "/api/update/any/user/field",
   userAuth.updateAnyUserField
 );
+authRouter.post('/api/update/user/profile', auth.tokenRequired, upload.single('profilePicture'), userAuth.updateUserProfile);
+
 //login user
 authRouter.post("/api/login/user", loginValidate, userAuth.login);
 //logout user
@@ -166,6 +168,16 @@ authRouter.post(
   "/api/submit/appointment/reviews",
   auth.tokenRequired,
   appointment.submitAppointmentReview
+);
+authRouter.get(
+  "/api/get/appointments",
+  auth.tokenRequired,
+  appointment.getAllAppointments
+);
+authRouter.get(
+  "/api/get/doctor/appointment/:doctorCode",
+  auth.tokenRequired,
+  appointment.getAppointmentsUnderDoctor
 );
 authRouter.post("/api/doctor/payment/add", auth.tokenRequired, paymentValidation, transactions.addPayment)
 authRouter.post("/api/doctor/withdrawal", auth.tokenRequired, withdrawalValidation, transactions.createWithdrawal)

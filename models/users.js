@@ -37,6 +37,9 @@ const User = sq.define(
     homeAddress: {
       type: DataTypes.STRING,
     },
+    profilePicture: {
+      type: DataTypes.STRING,
+    },
     workAddress: {
       type: DataTypes.STRING,
     },

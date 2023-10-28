@@ -97,7 +97,7 @@ DoctorPayment.sync().then(() => {
 
 
 // Define the withdrawal model
-const Withdrawal = sq.define('tbl_withdrawal', {
+const Withdrawal = sq.define('tbl_withdrawals', {
     id: {
         type: DataTypes.INTEGER,
         unique: true,
