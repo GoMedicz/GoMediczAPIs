@@ -81,7 +81,7 @@ const User = sq.define(
   }
 );
 
-User.sync({force:true}).then(() => {
+User.sync().then(() => {
   console.log("User model synced");
 });
 
