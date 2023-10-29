@@ -192,8 +192,15 @@ const getAppointmentReviewsByDoctorCode = async (req, res) => {
     }
 
     const responseData = appointmentReviews.map((review) => ({
-      // Include any other review attributes here
-      // Example: rating: review.rating, comment: review.comment,
+      // Include all appointment review properties
+      // Example: id: review.id, rating: review.rating, comment: review.reviewComments, etc.
+      id: review.id,
+      rating: review.rating,
+      reviewComments: review.reviewComments,
+      date_reviewed: review.date_reviewed,
+      totalRating: review.totalRating,
+      totalAppointmentsBooked: review.totalAppointmentsBooked,
+      // Include the user properties
       user: review.user
         ? {
             fullName: review.user.fullName,
