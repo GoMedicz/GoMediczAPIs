@@ -389,7 +389,7 @@ const updateUserProfile = async (req, res) => {
       updateData.otherAddress = req.body.otherAddress;
     }
 
-    if (req.body.profilePicture) {
+    if (req.file) { // Access the uploaded file using req.file
       updateData.profilePicture = req.file.filename;
     }
 
