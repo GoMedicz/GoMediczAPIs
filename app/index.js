@@ -4,7 +4,7 @@ const express = require('express');
 const app = express()
 // app.use('/images', express.static('C:/Users/Administrator/Desktop/gomedicz/GoMediczAPIs/app/images'))
 // app.use('/images', express.static(__dirname + '/images'));
-app.use('/images', express.static("C:\Users\Administrator\Desktop\gomedicz\GoMediczAPIs\images"))
+app.use('/images', express.static("C:/Users/Administrator/Desktop/gomedicz/GoMediczAPIs/images"))
 
 // const db = require("./config/database")
 const {authRouter} = require('../routes/route')
