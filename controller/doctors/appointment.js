@@ -126,21 +126,21 @@ const bookAppointment = async (req, res) => {
         const userCode = user.user_code;
 
         // Check if the appointment exists and is associated with the user
-        const existingAppointment = await Appointments.findOne({
-            where: {
-                appointment_code: data.appointment_code,
-                user_code: userCode,
-            },
-        });
-        console.log('Query result (existingAppointment):', existingAppointment);
+        // const existingAppointment = await Appointments.findOne({
+        //     where: {
+        //         appointment_code: data.appointment_code,
+        //         user_code: userCode,
+        //     },
+        // });
+        // // console.log('Query result (existingAppointment):', existingAppointment);
 
-        if (!existingAppointment) {
-            return res.send({
-                statusCode: 404,
-                status: false,
-                message: "Appointment not found or not associated with the user.",
-            });
-        }
+        // if (!existingAppointment) {
+        //     return res.send({
+        //         statusCode: 404,
+        //         status: false,
+        //         message: "Appointment not found or not associated with the user.",
+        //     });
+        // }
 
         // Create a new appointment review entry
         await AppointmentReviews.create({
