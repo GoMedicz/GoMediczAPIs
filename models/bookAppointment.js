@@ -162,6 +162,12 @@ const AppointmentReviews = sq.define(
   }
 );
 
+AppointmentReviews.belongsTo(User, {
+  foreignKey: "user_code",
+  targetKey: "user_code",
+  as: "user",
+});
+
 AppointmentReviews.sync().then(() => {
   console.log("appointments model synced");
 });

@@ -28,74 +28,72 @@ const generateAppointmentCode = () => {
 };
 
 const bookAppointment = async (req, res) => {
-    try {
+  try {
+    const { appointmentDate, appointmentReason, doctor_code, appointmentTime } = req.body;
+    console.log(req.body);
+    const userEmail = req.user.email; // Assuming user is authenticated
 
-      const { appointmentDate, appointmentReason, doctor_code,appointmentTime } = req.body;
-      console.log(req.body)
-      const userEmail = req.user.email; // Assuming user is authenticated
+    // Check if lab report was uploaded
+    const labReportFileName = req.file ? req.file.filename : null;
 
+    console.log(req.file); // Log the entire req.file object
+console.log(req.file.filename);
 
-        // Check if lab report was uploaded
-        const labReportPath = req.file ? req.file.path : null;
+    // Generate a unique appointment code
+    const appointmentCode = generateAppointmentCode();
 
-        // Construct the URL for the lab report
-        const labReportUrl = labReportPath ? `https://localhost:5190/${labReportPath}` : null;
+    // Find the user by email
+    const user = await User.findOne({ where: { email: userEmail } });
 
-      // Upload the lab report (if provided)
-        const appointmentCode = generateAppointmentCode()
-        const user = await User.findOne({ where: { email: userEmail } });
-      if (!user) {
-        return res.send({
-          statusCode:400,
-          status: false,
-          message: 'User not found',
-        });
-      }
-      const userCode = user.user_code;
-  
-        // Create a new appointment entry
-        const appointment = await Appointments.create({
-          appointmentDate: appointmentDate,
-          appointmentTime:appointmentTime,
-          appointmentReason: appointmentReason,
-          doctor_code: doctor_code,
-          userEmail: userEmail,
-          labReportPath: labReportPath,
-          appointment_code:appointmentCode,
-          user_code: userCode
-           // Assign the lab report path if uploaded
-
-        });
-        console.log(appointment)
-  
-        // Increment totalAppointmentsBooked in the Doctors model
-        await Doctors.increment('totalAppointmentsBooked', {
-          by: 1,
-          where: { doctor_code: doctor_code },
-        });
-  
-        // Include the lab report URL in the response data
-        return res.send({
-          statusCode:200,
-          status: true,
-          message: 'Appointment booked successfully',
-          data: {
-            ...appointment.toJSON(),
-            labReportUrl: labReportUrl,
-          },
-        });
-      
-    } catch (error) {
-      console.error(error);
+    if (!user) {
       return res.send({
-        statusCode:500,
+        statusCode: 400,
         status: false,
-        message: 'Failed to book appointment',
-        error: error.message,
+        message: 'User not found',
       });
     }
-  };
 
+    const userCode = user.user_code;
+
+    // Create a new appointment entry
+    const appointment = await Appointments.create({
+      appointmentDate: appointmentDate,
+      appointmentTime: appointmentTime,
+      appointmentReason: appointmentReason,
+      doctor_code: doctor_code,
+      userEmail: userEmail,
+      labReportFileName: labReportFileName, // Store the file name
+      appointment_code: appointmentCode,
+      user_code: userCode,
+    });
+    
+
+    // Increment totalAppointmentsBooked in the Doctors model
+    await Doctors.increment('totalAppointmentsBooked', {
+      by: 1,
+      where: { doctor_code: doctor_code },
+    });
+
+    // Include the lab report file name in the response data
+    return res.send({
+      statusCode: 200,
+      status: true,
+      message: 'Appointment booked successfully',
+      data: {
+        ...appointment.toJSON(),
+        labReportFileName: labReportFileName,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.send({
+      statusCode: 500,
+      status: false,
+      message: 'Failed to book appointment',
+      error: error.message,
+    });
+  }
+};
 
   const submitAppointmentReview = async (req, res) => {
     try {
@@ -176,6 +174,13 @@ const getAppointmentReviewsByDoctorCode = async (req, res) => {
 
     const appointmentReviews = await AppointmentReviews.findAll({
       where: { doctor_code: doctorCode },
+      include: [
+        {
+          model: sq.models.tbl_users,
+          as: 'user',
+          attributes: ['fullName', 'profilePicture'],
+        },
+      ],
     });
 
     if (appointmentReviews.length === 0) {
@@ -186,10 +191,21 @@ const getAppointmentReviewsByDoctorCode = async (req, res) => {
       });
     }
 
+    const responseData = appointmentReviews.map((review) => ({
+      // Include any other review attributes here
+      // Example: rating: review.rating, comment: review.comment,
+      user: review.user
+        ? {
+            fullName: review.user.fullName,
+            profilePicture: review.user.profilePicture,
+          }
+        : null,
+    }));
+
     return res.send({
       statusCode: 200,
       status: true,
-      appointmentReviews,
+      appointmentReviews: responseData,
     });
   } catch (error) {
     console.error(error);
@@ -201,6 +217,7 @@ const getAppointmentReviewsByDoctorCode = async (req, res) => {
     });
   }
 };
+
 
 const getAllAppointments = async (req, res) => {
   try {
@@ -249,7 +266,7 @@ const getAppointmentsUnderDoctor = async (req, res) => {
           attributes: ['fullName', 'profilePicture'],
         },
       ],
-      attributes: ['appointmentDate', 'appointmentTime','appointmentReason'],
+      attributes: ['appointmentDate', 'appointmentTime', 'appointmentReason'],
     });
 
     if (appointments.length === 0) {
@@ -261,11 +278,21 @@ const getAppointmentsUnderDoctor = async (req, res) => {
       });
     }
 
+    const responseData = appointments.map((appointment) => ({
+      appointmentDate: appointment.appointmentDate,
+      appointmentTime: appointment.appointmentTime,
+      appointmentReason: appointment.appointmentReason,
+      user: {
+        fullName: appointment.user.fullName,
+        profilePicture: appointment.user.profilePicture,
+      },
+    }));
+
     return res.send({
       statusCode: 200,
       status: true,
       message: "Appointments retrieved successfully",
-      data: appointments,
+      data: responseData,
     });
   } catch (error) {
     console.error(error);
@@ -277,9 +304,6 @@ const getAppointmentsUnderDoctor = async (req, res) => {
     });
   }
 };
-
-
-  
 
 
 
