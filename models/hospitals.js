@@ -1,9 +1,8 @@
-const { sq } = require('../config/database')
-const Sequelize = require('sequelize')
-const {DataTypes} = require('sequelize')
 
 
-const Hospitals = sq.define('tbl_hospitals',{
+module.exports = (sequelize,DataTypes)=>{
+    
+const Hospital = sequelize.define('Hospital',{
     name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -28,12 +27,11 @@ const Hospitals = sq.define('tbl_hospitals',{
         type: DataTypes.TEXT,
     },
 
-})
-
-Hospitals.sync().then(()=>{
-    console.log('hospital model synced')
-})
-
+},{
+    // This is according to the doc, freezing the tablename is to avoid plural renaming 
+    sequelize,freezeTableName:true,timestamps:true
+});
 
 
-module.exports = Hospitals
+return Hospital;
+}

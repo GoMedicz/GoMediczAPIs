@@ -1,12 +1,7 @@
 require("dotenv").config()
-const path = require('path');
 const express = require('express');
 const app = express()
-// app.use('/images', express.static('C:/Users/Administrator/Desktop/gomedicz/GoMediczAPIs/app/images'))
-// app.use('/images', express.static(__dirname + '/images'));
-app.use('/images', express.static("C:/Users/Administrator/Desktop/gomedicz/GoMediczAPIs/images"))
-
-// const db = require("./config/database")
+require("../__dbinit")();
 const {authRouter} = require('../routes/route')
 const bodyParser = require('body-parser');
 // const regR = require('./routes/auth')
@@ -26,6 +21,8 @@ app.use(express.urlencoded({ extended: true }));
       );
       next();
   });
+
+  app.use(express.static("./public"));
 
 
   app.use(authRouter)

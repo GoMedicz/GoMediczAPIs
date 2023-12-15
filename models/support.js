@@ -1,31 +1,27 @@
-const { sq } = require('../config/database')
-const Sequelize = require('sequelize')
-const {DataTypes} = require('sequelize')
 
 
-const Support = sq.define('tbl_support',{
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    message: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    }
-
-},{
-    indexes: [
-        {
-            fields: ['email'], // Add an index on the 'email' field
+module.exports = (sequelize,DataTypes)=>{
+    
+    const Support = sequelize.define('Support',{
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
         },
-        // Add other indexes as needed
-    ],
-})
+        message: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        }
+    
+    },{
+        indexes: [
+            {
+                fields: ['email'], // Add an index on the 'email' field
+            },
+            // Add other indexes as needed
+        ],
+    },{
+        sequelize,freezeTableName:true,timestamps:true
+    })
 
-Support.sync().then(()=>{
-    console.log('support model synced')
-})
-
-
-
-module.exports = Support
+    return Support;
+}
